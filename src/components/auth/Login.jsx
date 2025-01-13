@@ -5,6 +5,9 @@ import { FaTimes, FaUser, FaLock } from "react-icons/fa";
 import LoadingButton from "../common/Button";
 import bg_image from "../../assets/eac-pic.jpg";
 import logo from "../../assets/logo.png";
+import { PiUserDuotone } from "react-icons/pi";
+import { GiPadlock } from "react-icons/gi";
+import { BiLogInCircle } from "react-icons/bi";
 
 const LoginPage = () => {
   const [credentials, setCredentials] = useState({
@@ -40,19 +43,20 @@ const LoginPage = () => {
         }),
       });
 
-      const data = await response.json();
+      // const data = await response.json();
+      navigate(from, { replace: true });
 
-      if (response.ok) {
-        // Call the login function from context with the token and user data
-        login(data.token, data.user);
-        // Redirect to the page they tried to visit or home
-        navigate(from, { replace: true });
-      } else {
-        setError(data.message || "Login failed");
-        errRef.current.focus();
-      }
+      // if (response.ok) {
+      //   // Call the login function from context with the token and user data
+      //   login(data.token, data.user);
+      //   // Redirect to the page they tried to visit or home
+      //   navigate(from, { replace: true });
+      // } else {
+      //   setError(data.message || "Login failed");
+      //   errRef.current.focus();
+      // }
     } catch (err) {
-      setError("An error occurred during login");
+      setError("An error occurred during login!!");
       console.error("Login error:", err);
     } finally {
       setLoading(false);
@@ -61,43 +65,45 @@ const LoginPage = () => {
 
   const handleNavigateHome = () => {
     navigate("/");
+    // setLoading(true);
   };
 
   return (
     <div
-      className="flex items-center justify-center min-h-screen bg-cover bg-center font-inter p-6"
+      className="flex items-center justify-center min-h-screen bg-cover bg-center font-inter p-4 sm:p-6"
       style={{ backgroundImage: `url(${bg_image})` }}
     >
-      <section className="relative bg-white bg-opacity-85 p-6 md:p-8 px-7 rounded-3xl shadow-md w-full max-w-[49rem] md:px-40">
+      <section className="relative bg-white bg-opacity-90 p-6 sm:p-8 rounded-3xl shadow-lg w-full max-w-2xl mx-4">
+        {/* Close Button */}
         <button
-          className="absolute top-4 right-6 text-red-500 hover:text-red-700 font-extrabold text-xl"
+          className="absolute top-5 right-5 text-red-500 hover:text-red-700 font-extrabold text-xl"
           onClick={handleNavigateHome}
         >
           <FaTimes />
         </button>
 
         {/* Logo */}
-        <div className="text-center mb-4">
+        <div className="text-center mb-3">
           <img
             src={logo}
             alt="Logo"
-            className="mx-auto mb-2 h-[6rem] md:h-[8.5rem]"
+            className="mx-auto mb-2 h-20 sm:h-24 md:h-28"
           />
-          <h2 className="text-center font-bold text-xl md:text-2xl text-primary-700">
+          <h2 className="text-center font-extrabold text-xl sm:text-2xl text-primary-700">
             East African Community Secretariat
           </h2>
-          <p className="mt-1 font-bold text-sm md:text-base text-gray-500">
+          <p className="mt-2 font-bold text-sm sm:text-base text-gray-500">
             Sign in to access your Account
           </p>
         </div>
 
         {/* Login Form */}
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-3 md:px-14">
           {/* Error Message */}
           {error && (
             <p
               ref={errRef}
-              className="text-red-600 font-semibold text-sm text-center"
+              className="text-red-600 font-bold text-sm text-center"
               aria-live="assertive"
             >
               {error}
@@ -106,7 +112,10 @@ const LoginPage = () => {
 
           {/* Username Input */}
           <div className="relative">
-            <FaUser className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500" />
+            <PiUserDuotone
+              size={20}
+              className="absolute left-6 top-1/2 transform -translate-y-1/2 text-gray-600"
+            />
             <input
               type="text"
               placeholder="Enter your username"
@@ -117,13 +126,16 @@ const LoginPage = () => {
                 setCredentials({ ...credentials, username: e.target.value })
               }
               required
-              className="w-full py-3 pl-12 pr-4 border text-sm font-medium border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-700"
+              className="w-full py-3 pl-16 pr-4 border text-sm md:text-[14.5px] text-gray-600 font-semibold border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-700 focus:border-transparent"
             />
           </div>
 
           {/* Password Input */}
           <div className="relative">
-            <FaLock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500" />
+            <GiPadlock
+              size={20}
+              className="absolute left-6 top-1/2 transform -translate-y-1/2 text-gray-500"
+            />
             <input
               type="password"
               id="password"
@@ -133,7 +145,7 @@ const LoginPage = () => {
                 setCredentials({ ...credentials, password: e.target.value })
               }
               required
-              className="w-full py-3 pl-12 pr-4 border text-sm font-medium border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-700"
+              className="w-full py-3 pl-16 pr-4 border text-sm md:text-[14.5px] font-semibold border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-700 focus:border-transparent"
             />
           </div>
 
@@ -153,21 +165,21 @@ const LoginPage = () => {
             </div>
             <a
               href="#"
-              className="text-sm font-semibold text-blue-600 hover:underline"
+              className="text-sm font-semibold text-primary-600 hover:underline"
             >
               Forgot your password?
             </a>
           </div>
 
-          {/* Login Button */}
-          <div className="text-center">
+          <div className="flex justify-center">
             <LoadingButton
               type="submit"
               disabled={loading}
               buttonText="Sign In"
               loadingText="Signing in..."
               isLoading={loading}
-              className="w-full md:w-2/5 mt-6 py-3 text-center font-semibold text-white text-sm bg-green-700 rounded-lg hover:bg-green-800 transition duration-300"
+              prefixElement={<BiLogInCircle size={20} />}
+              className="w-full sm:w-3/5 mt-2 py-3 shadow-lg text-center font-semibold text-white text-sm md:text-[14px] bg-green-700 rounded-lg hover:bg-green-800 transition duration-300"
             />
           </div>
         </form>

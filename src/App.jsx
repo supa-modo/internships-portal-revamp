@@ -4,6 +4,7 @@ import InternshipApplications from "./pages/Applications";
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/common/ProtectedRoute";
 import LoginPage from "./components/auth/Login";
+import HomePage from "./pages/Homepage";
 
 const App = () => {
   return (
@@ -12,7 +13,7 @@ const App = () => {
         <Routes>
           {/* Public Routes */}
 
-          <Route path="/" element={<InternshipApplications />} />
+          <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<LoginPage />} />
 
           {/* Protected Routes */}

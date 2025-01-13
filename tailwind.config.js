@@ -16,6 +16,11 @@ module.exports = {
           900: "#14532d",
         },
       },
+      fontFamily: {
+        "nunito-sans": ['"Nunito Sans"', "sans-serif"],
+        "open-sans": ['"Open Sans"', "sans-serif"],
+        geist: ['"Geist"', "sans-serif"],
+      },
     },
   },
   plugins: [],

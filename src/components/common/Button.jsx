@@ -8,6 +8,7 @@ const LoadingButton = ({
   isLoading,
   className,
   onClick,
+  prefixElement, // New prop for the icon or element before the text
 }) => {
   return (
     <button
@@ -43,8 +44,11 @@ const LoadingButton = ({
           {loadingText}
         </>
       ) : (
-        // Button Text
-        buttonText
+        // Button Text with optional prefix element
+        <>
+          {prefixElement && <span className="mr-2">{prefixElement}</span>}
+          {buttonText}
+        </>
       )}
     </button>
   );
