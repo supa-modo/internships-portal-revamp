@@ -29,7 +29,7 @@ const HomePage = () => {
               {policyData.content.map((item, index) => (
                 <div key={index} className="space-y-4">
                   {item.section && (
-                    <h3 className="text-base md:text-lg font-bold font-nunito-sans text-gray-600">
+                    <h3 className="text-base font-bold font-nunito-sans text-gray-600">
                       {item.section}
                     </h3>
                   )}

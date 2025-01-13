@@ -186,7 +186,8 @@ const Header = () => {
             {/* Admin Login */}
             <div
               className="whitespace-nowrap text-blue-300 text-lg font-semibold cursor-pointer"
-              onClick={() => setDropdownOpen(!dropdownOpen)}
+              // onClick={() => setDropdownOpen(!dropdownOpen)}
+              onClick={() => NavigationType("/login")}
             >
               <RiAdminLine className="inline mr-3 text-white" size={23} />
               Admin Login

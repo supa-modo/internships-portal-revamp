@@ -5,6 +5,7 @@ import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/common/ProtectedRoute";
 import LoginPage from "./components/auth/Login";
 import HomePage from "./pages/Homepage";
+import ApplicationForm from "./pages/Applications";
 
 const App = () => {
   return (
@@ -15,6 +16,7 @@ const App = () => {
 
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/applications" element={<ApplicationForm />} />
 
           {/* Protected Routes */}
           <Route
