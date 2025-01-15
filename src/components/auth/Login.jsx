@@ -73,7 +73,7 @@ const LoginPage = () => {
       className="flex items-center justify-center min-h-screen bg-cover bg-center font-inter p-4 sm:p-6"
       style={{ backgroundImage: `url(${bg_image})` }}
     >
-      <section className="relative bg-white bg-opacity-90 p-6 sm:p-8 rounded-3xl shadow-lg w-full max-w-2xl mx-4">
+      <section className="relative bg-white bg-opacity-90 p-6 sm:p-8 rounded-3xl shadow-lg w-full max-w-2xl">
         {/* Close Button */}
         <button
           className="absolute top-5 right-5 text-red-500 hover:text-red-700 font-extrabold text-xl"
@@ -83,7 +83,7 @@ const LoginPage = () => {
         </button>
 
         {/* Logo */}
-        <div className="text-center mb-3">
+        <div className="text-center mb-2 sm:mb-3">
           <img
             src={logo}
             alt="Logo"
@@ -92,13 +92,13 @@ const LoginPage = () => {
           <h2 className="text-center font-extrabold text-xl sm:text-2xl text-primary-700">
             East African Community Secretariat
           </h2>
-          <p className="mt-2 font-bold text-sm sm:text-base text-gray-500">
+          <p className="mt-1 font-bold text-sm sm:text-base text-gray-500">
             Sign in to access your Account
           </p>
         </div>
 
         {/* Login Form */}
-        <form onSubmit={handleSubmit} className="space-y-3 md:px-14">
+        <form onSubmit={handleSubmit} className="sm:space-y-3 space-y-2 md:px-14">
           {/* Error Message */}
           {error && (
             <p
@@ -157,15 +157,15 @@ const LoginPage = () => {
                 id="rememberMe"
                 checked={rememberMe}
                 onChange={(e) => setRememberMe(e.target.checked)}
-                className="w-4 h-4 text-green-700 border-gray-300 rounded focus:ring-green-700"
+                className="w-4 sm:h-4 text-green-700 border-gray-300 rounded focus:ring-green-700"
               />
-              <label className="ml-2 text-sm font-semibold text-green-700">
+              <label className="ml-2 text-xs sm:text-sm sm:font-semibold sm:font-sans font-open-sans font-bold text-gray-600">
                 Remember Me
               </label>
             </div>
             <a
               href="#"
-              className="text-sm font-semibold text-primary-600 hover:underline"
+              className="text-xs sm:text-sm sm:font-sans font-open-sans font-bold text-primary-700 hover:underline"
             >
               Forgot your password?
             </a>

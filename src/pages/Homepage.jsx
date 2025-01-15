@@ -15,7 +15,7 @@ const HomePage = () => {
           {/* Policy Header */}
           <div className="bg-green-700 text-center px-6 py-6 sm:px-8">
             <h2 className="text-lg md:text-2xl font-nunito-sans font-extrabold text-white">
-              EAC Internship Policy
+              East African Community Internship Policy
             </h2>
             <p className="mt-2 text-sm md:text-base text-primary-100">
               Please review our internship policy before proceeding with your
