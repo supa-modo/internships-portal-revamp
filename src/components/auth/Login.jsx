@@ -44,7 +44,8 @@ const LoginPage = () => {
       });
 
       // const data = await response.json();
-      navigate(from, { replace: true });
+      // navigate(from, { replace: true });
+      navigate("/hr-admin");
 
       // if (response.ok) {
       //   // Call the login function from context with the token and user data
@@ -98,7 +99,10 @@ const LoginPage = () => {
         </div>
 
         {/* Login Form */}
-        <form onSubmit={handleSubmit} className="sm:space-y-3 space-y-2 md:px-14">
+        <form
+          onSubmit={handleSubmit}
+          className="sm:space-y-3 space-y-2 md:px-14"
+        >
           {/* Error Message */}
           {error && (
             <p

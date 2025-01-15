@@ -6,6 +6,7 @@ import ProtectedRoute from "./components/common/ProtectedRoute";
 import LoginPage from "./components/auth/Login";
 import HomePage from "./pages/Homepage";
 import ApplicationForm from "./pages/Applications";
+import DashboardLayout from "./pages/HRAdminDashboard";
 
 const App = () => {
   return (
@@ -17,6 +18,7 @@ const App = () => {
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/applications" element={<ApplicationForm />} />
+          <Route path="/hr-admin" element={<DashboardLayout />} />
 
           {/* Protected Routes */}
           <Route
