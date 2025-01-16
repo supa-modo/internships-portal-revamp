@@ -37,7 +37,7 @@ const DashboardLayout = () => {
       {
         header: "Applicant Name",
         accessor: "name",
-        render: (row) => <span className="font-semibold">{row.applicantName}</span>,
+        render: (row) => <span className="font-semibold text-[15px]">{row.applicantName}</span>,
       },
       { header: "Department", accessor: "department" },
       { header: "Phone Number", accessor: "phone" },

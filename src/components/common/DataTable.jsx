@@ -37,7 +37,7 @@ const DataTable = ({
 
   const sampleApplication = {
     // Personal Information
-    fullName: "Johnson Emily D",
+    fullName: "Johnson Emily Smith",
     passportNo: "P45678901",
     email: "emily.johnson@example.com",
     phone: "4567890123",
