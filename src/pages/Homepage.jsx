@@ -14,7 +14,7 @@ const HomePage = () => {
         <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
           {/* Policy Header */}
           <div className="bg-green-700 text-center px-5 py-5 sm:px-8 sm:py-6">
-            <h2 className="text-sm sm:text-lg md:text-2xl font-nunito-sans font-extrabold text-white">
+            <h2 className="text-[15px] sm:text-lg md:text-2xl font-nunito-sans font-extrabold text-white">
               East African Community Internship Policy
             </h2>
             <p className="mt-2 text-sm md:text-base text-primary-100">
