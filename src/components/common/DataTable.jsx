@@ -14,6 +14,7 @@ const DataTable = ({
   searchPlaceholder = "Search...",
   onRowClick,
   defaultItemsPerPage = 10,
+  headerButtons, // New prop for custom buttons
 }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeFilters, setActiveFilters] = useState({});
@@ -145,6 +146,11 @@ const DataTable = ({
         <h2 className="text-xl font-extrabold text-primary-700">{title}</h2>
 
         <div className="flex items-center gap-6">
+          {/* Custom Buttons */}
+          {headerButtons && (
+            <div className="flex items-center gap-3">{headerButtons}</div>
+          )}
+
           {/* Search */}
           <div className="relative">
             <IoSearch className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-green-600" />
@@ -231,7 +237,6 @@ const DataTable = ({
             {currentData.map((item, index) => (
               <tr
                 key={item.id || index}
-                // onClick={() => setSelectedApplication(item)}
                 onClick={() => setSelectedApplication(sampleApplication)}
                 className="border-x border-gray-300 hover:bg-amber-100 cursor-pointer"
               >
@@ -251,21 +256,22 @@ const DataTable = ({
         </table>
 
         {selectedApplication && (
-        <ApplicationDetails
-          application={selectedApplication}
-          isOpen={!!selectedApplication}
-          onClose={() => setSelectedApplication(null)}
-          onEdit={() => {
-            // Handle edit logic
-            console.log("Edit application:", selectedApplication);
-          }}
-          onDelete={() => {
-            // Handle delete logic
-            console.log("Delete application:", selectedApplication);
-            setSelectedApplication(null);
-          }}
-        />
-      )}
+          <ApplicationDetails
+            application={selectedApplication}
+            isOpen={!!selectedApplication}
+            onClose={() => setSelectedApplication(null)}
+            onEdit={() => {
+              // Handle edit logic
+              console.log("Edit application:", selectedApplication);
+            }}
+            onDelete={() => {
+              // Handle delete logic
+              console.log("Delete application:", selectedApplication);
+              setSelectedApplication(null);
+            }}
+          />
+        )}
+
         {/* Pagination */}
         <div className="flex items-center border-x border-b rounded-b-2xl border-gray-300 justify-between px-6 py-4">
           <div className="flex items-center gap-4">
@@ -337,7 +343,6 @@ const DataTable = ({
           </div>
         </div>
       </div>
-      
     </div>
   );
 };
