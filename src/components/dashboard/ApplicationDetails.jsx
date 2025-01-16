@@ -168,17 +168,23 @@ const ApplicationDetails = ({
           <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200 bg-gradient-to-r from-primary-700 to-primary-600">
             <div className="flex items-center gap-4 pl-8">
               <div>
-                <h2 className="text-2xl font-bold text-white">
+                <h2 className="text-2xl font-bold text-white mb-2">
                   Internship Application Details -{" "}
                   <span className="text-amber-400">{application.fullName}</span>
                 </h2>
-                <span
-                  className={`inline-flex items-center px-5 py-1 text-xs font-medium rounded-lg border mt-1 ${
-                    statusColors[application.status]
-                  }`}
-                >
-                  {application.status}
-                </span>
+                <div className="flex items-baseline gap-4">
+                  <span
+                    className={`inline-flex items-center px-5 py-1 text-xs font-medium rounded-lg border mt-1 ${
+                      statusColors[application.status]
+                    }`}
+                  >
+                    {application.status}
+                  </span>
+                  <span className="text-sm  text-amber-200">
+                    Submitted on:{" "}
+                    <span className="">{application.dateSubmitted}</span>
+                  </span>
+                </div>
               </div>
             </div>
             <button
@@ -198,7 +204,7 @@ const ApplicationDetails = ({
                   <div className="w-24 h-24 bg-gradient-to-br from-primary-500 to-teal-400 rounded-2xl flex items-center justify-center shadow-lg">
                     <FaUser className="w-12 h-12 text-white" />
                   </div>
-                  <h3 className="text-xl font-extrabold text-gray-600">
+                  <h3 className="text-xl font-bold text-gray-500">
                     {application.fullName}
                   </h3>
                   <p className="text-sm text-gray-500 mt-1">
@@ -261,17 +267,10 @@ const ApplicationDetails = ({
                     ))}
                   </div>
                 </div>
-
-                <p className="text-sm pt-2 px-3 text-center">
-                  Application Date:{" "}
-                  <span className="text-red-500 font-semibold">
-                    {application.dateSubmitted}
-                  </span>
-                </p>
               </div>
 
               {/* Right Side - Details */}
-              <div className="flex-1 grid grid-cols-1 gap-5">
+              <div className="flex-1 grid grid-cols-1 gap-4">
                 {sections.map((section, index) => (
                   <div
                     key={index}

@@ -5,39 +5,21 @@ import SideNavbar from "../components/dashboard/SideNavBar";
 import Reports from "../components/dashboard/Reports";
 import Letters from "../components/dashboard/Letters";
 import Policy from "../components/dashboard/Policy";
+import ExtendInternship from "../components/dashboard/ExtendInternship";
 
 const DashboardLayout = () => {
   const [activeSection, setActiveSection] = useState("all");
 
   // Sample data and configurations for the DataTable
   const tableConfig = {
-    // columns: [
-    //   { header: "#", accessor: "id" },
-    //   { header: "Applicant Name", accessor: "name" },
-    //   { header: "Department", accessor: "department" },
-    //   { header: "Phone Number", accessor: "phone" },
-    //   { header: "Nationality", accessor: "nationality" },
-    //   { header: "Start Date", accessor: "startDate" },
-    //   { header: "End Date", accessor: "endDate" },
-    //   { header: "Status", accessor: "status" },
-    //   { header: "Application Date", accessor: "applicationDate" },
-    //   {
-    //     header: "Action",
-    //     accessor: "action",
-    //     render: () => (
-    //       <button className="px-4 py-1.5 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700">
-    //         View
-    //       </button>
-    //     ),
-    //   },
-    // ],
-
     columns: [
       { header: "#", accessor: "id" },
       {
         header: "Applicant Name",
         accessor: "name",
-        render: (row) => <span className="font-semibold text-[15px]">{row.applicantName}</span>,
+        render: (row) => (
+          <span className="font-semibold text-[15px]">{row.applicantName}</span>
+        ),
       },
       { header: "Department", accessor: "department" },
       { header: "Phone Number", accessor: "phone" },
@@ -232,6 +214,8 @@ const DashboardLayout = () => {
         return <Policy />;
       case "letters":
         return <Letters />;
+      case "extend":
+        return <ExtendInternship />;
       case "all":
       case "under-review":
       case "pending":
