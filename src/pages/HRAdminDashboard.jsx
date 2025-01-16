@@ -6,31 +6,65 @@ import Reports from "../components/dashboard/Reports";
 import Letters from "../components/dashboard/Letters";
 import Policy from "../components/dashboard/Policy";
 
-
 const DashboardLayout = () => {
   const [activeSection, setActiveSection] = useState("all");
 
   // Sample data and configurations for the DataTable
   const tableConfig = {
+    // columns: [
+    //   { header: "#", accessor: "id" },
+    //   { header: "Applicant Name", accessor: "name" },
+    //   { header: "Department", accessor: "department" },
+    //   { header: "Phone Number", accessor: "phone" },
+    //   { header: "Nationality", accessor: "nationality" },
+    //   { header: "Start Date", accessor: "startDate" },
+    //   { header: "End Date", accessor: "endDate" },
+    //   { header: "Status", accessor: "status" },
+    //   { header: "Application Date", accessor: "applicationDate" },
+    //   {
+    //     header: "Action",
+    //     accessor: "action",
+    //     render: () => (
+    //       <button className="px-4 py-1.5 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700">
+    //         View
+    //       </button>
+    //     ),
+    //   },
+    // ],
+
     columns: [
       { header: "#", accessor: "id" },
-      { header: "Applicant Name", accessor: "name" },
+      {
+        header: "Applicant Name",
+        accessor: "name",
+        render: (row) => <span className="font-semibold">{row.applicantName}</span>,
+      },
       { header: "Department", accessor: "department" },
       { header: "Phone Number", accessor: "phone" },
       { header: "Nationality", accessor: "nationality" },
       { header: "Start Date", accessor: "startDate" },
       { header: "End Date", accessor: "endDate" },
-      { header: "Status", accessor: "status" },
-      { header: "Application Date", accessor: "applicationDate" },
+
       {
-        header: "Action",
-        accessor: "action",
-        render: () => (
-          <button className="px-4 py-1.5 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700">
-            View
-          </button>
+        header: "Status",
+        accessor: "status",
+        render: (row) => (
+          <span
+            className={`px-3 border pb-1.5 pt-1 rounded-lg text-xs ${
+              row.status === "pending" ? "bg-yellow-200 text-yellow-800" : ""
+            }
+              ${
+                row.status === "under-review" ? "bg-blue-200 text-blue-800" : ""
+              }
+              
+              ${row.status === "approved" ? "bg-green-200 text-green-800" : ""}
+              ${row.status === "archived" ? "bg-red-200 text-red-600" : ""}`}
+          >
+            {row.status}
+          </span>
         ),
       },
+      { header: "Application Date", accessor: "applicationDate" },
     ],
     filters: [
       {
@@ -45,30 +79,30 @@ const DashboardLayout = () => {
     data: [
       {
         id: 1,
-        name: "John Doe",
+        applicantName: "John Doe",
         department: "IT",
         phone: "1234567890",
         nationality: "Kenya",
         startDate: "2024-01-15",
         endDate: "2024-07-15",
-        status: "pending",
+        status: "archived",
         applicationDate: "2024-01-01",
       },
       {
         id: 2,
-        name: "John Doe",
-        department: "IT",
+        applicantName: "Johnson Emily D",
+        department: "Procurement",
         phone: "1234567890",
         nationality: "Kenya",
         startDate: "2024-01-15",
         endDate: "2024-07-15",
-        status: "pending",
+        status: "under-review",
         applicationDate: "2024-01-01",
       },
       {
         id: 3,
-        name: "John Doe",
-        department: "IT",
+        applicantName: "Jane Smith",
+        department: "Marketing",
         phone: "1234567890",
         nationality: "Kenya",
         startDate: "2024-01-15",
@@ -78,8 +112,8 @@ const DashboardLayout = () => {
       },
       {
         id: 4,
-        name: "John Doe",
-        department: "IT",
+        applicantName: "Jane Doe",
+        department: "Finance",
         phone: "1234567890",
         nationality: "Kenya",
         startDate: "2024-01-15",
@@ -89,8 +123,8 @@ const DashboardLayout = () => {
       },
       {
         id: 5,
-        name: "John Doe",
-        department: "IT",
+        applicantName: "Jane Jane",
+        department: "Human Resources",
         phone: "1234567890",
         nationality: "Kenya",
         startDate: "2024-01-15",
@@ -100,52 +134,52 @@ const DashboardLayout = () => {
       },
       {
         id: 6,
-        name: "John Doe",
+        applicantName: "John Brown",
         department: "IT",
         phone: "1234567890",
         nationality: "Kenya",
         startDate: "2024-01-15",
         endDate: "2024-07-15",
-        status: "pending",
+        status: "under-review",
         applicationDate: "2024-01-01",
       },
       {
         id: 7,
-        name: "John Doe",
-        department: "IT",
+        applicantName: "Lilian Joseph",
+        department: "International Relations",
         phone: "1234567890",
         nationality: "Kenya",
         startDate: "2024-01-15",
         endDate: "2024-07-15",
-        status: "pending",
+        status: "approved",
         applicationDate: "2024-01-01",
       },
       {
         id: 8,
-        name: "John Doe",
-        department: "IT",
+        applicantName: "Lisa Williams",
+        department: "Finance",
         phone: "1234567890",
         nationality: "Kenya",
         startDate: "2024-01-15",
         endDate: "2024-07-15",
-        status: "pending",
+        status: "archived",
         applicationDate: "2024-01-01",
       },
       {
         id: 9,
-        name: "John Doe",
-        department: "IT",
+        applicantName: "John Doe",
+        department: "Operations",
         phone: "1234567890",
         nationality: "Kenya",
         startDate: "2024-01-15",
         endDate: "2024-07-15",
-        status: "pending",
+        status: "approved",
         applicationDate: "2024-01-01",
       },
       {
         id: 10,
-        name: "John Doe",
-        department: "IT",
+        applicantName: "Jane Smith",
+        department: "Marketing",
         phone: "1234567890",
         nationality: "Kenya",
         startDate: "2024-01-15",
@@ -155,8 +189,8 @@ const DashboardLayout = () => {
       },
       {
         id: 11,
-        name: "John Doe",
-        department: "IT",
+        applicantName: "Jane Doe",
+        department: "Finance",
         phone: "1234567890",
         nationality: "Kenya",
         startDate: "2024-01-15",
@@ -166,8 +200,8 @@ const DashboardLayout = () => {
       },
       {
         id: 12,
-        name: "John Doe",
-        department: "IT",
+        applicantName: "Jane Jane",
+        department: "Human Resources",
         phone: "1234567890",
         nationality: "Kenya",
         startDate: "2024-01-15",
@@ -177,7 +211,7 @@ const DashboardLayout = () => {
       },
       {
         id: 13,
-        name: "John Doe",
+        applicantName: "John Brown",
         department: "IT",
         phone: "1234567890",
         nationality: "Kenya",
@@ -186,51 +220,6 @@ const DashboardLayout = () => {
         status: "pending",
         applicationDate: "2024-01-01",
       },
-      {
-        id: 14,
-        name: "John Doe",
-        department: "IT",
-        phone: "1234567890",
-        nationality: "Kenya",
-        startDate: "2024-01-15",
-        endDate: "2024-07-15",
-        status: "pending",
-        applicationDate: "2024-01-01",
-      },
-      {
-        id: 15,
-        name: "John Doe",
-        department: "IT",
-        phone: "1234567890",
-        nationality: "Kenya",
-        startDate: "2024-01-15",
-        endDate: "2024-07-15",
-        status: "pending",
-        applicationDate: "2024-01-01",
-      },
-      {
-        id: 16,
-        name: "John Doe",
-        department: "IT",
-        phone: "1234567890",
-        nationality: "Kenya",
-        startDate: "2024-01-15",
-        endDate: "2024-07-15",
-        status: "pending",
-        applicationDate: "2024-01-01",
-      },
-      {
-        id: 17,
-        name: "John Doe",
-        department: "IT",
-        phone: "1234567890",
-        nationality: "Kenya",
-        startDate: "2024-01-15",
-        endDate: "2024-07-15",
-        status: "pending",
-        applicationDate: "2024-01-01",
-      },
-      // Add more sample data as needed
     ],
   };
 
@@ -289,7 +278,9 @@ const DashboardLayout = () => {
               activeItem={activeSection}
               onMenuClick={(section) => setActiveSection(section)}
             />
-            <div className="flex-1 min-h-[calc(100vh-12rem)] rounded-2xl shadow-lg bg-white">{renderContent()}</div>
+            <div className="flex-1 min-h-[calc(100vh-12rem)] rounded-2xl shadow-lg bg-white">
+              {renderContent()}
+            </div>
           </div>
         </div>
       </div>

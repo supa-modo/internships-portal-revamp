@@ -1,8 +1,10 @@
 import React, { useState, useMemo } from "react";
-import { IoSearch } from "react-icons/io5";
+import { IoSearch, IoCheckmark } from "react-icons/io5";
 import { IoMdClose } from "react-icons/io";
 import { HiMiniArrowsUpDown } from "react-icons/hi2";
 import { TbChevronLeft, TbChevronRight } from "react-icons/tb";
+import { FaCheck } from "react-icons/fa6";
+import ApplicationDetails from "../dashboard/ApplicationDetails";
 
 const DataTable = ({
   title,
@@ -18,6 +20,7 @@ const DataTable = ({
   const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(defaultItemsPerPage);
+  const [selectedApplication, setSelectedApplication] = useState(null);
 
   const handleSort = (key, index) => {
     // Skip sorting for first and last columns
@@ -30,6 +33,54 @@ const DataTable = ({
           ? "desc"
           : "asc",
     });
+  };
+
+  const sampleApplication = {
+    // Personal Information
+    fullName: "Johnson Emily D",
+    passportNo: "P45678901",
+    email: "emily.johnson@example.com",
+    phone: "4567890123",
+    nationality: "Rwanda",
+    address: "101 Maple St, Kigali",
+    dateSubmitted: "October 30, 2024",
+
+    // Education Details
+    institution: "University D",
+    course: "Electrical Engineering",
+    currentYear: "3",
+    academicAward: "Bachelor",
+
+    // Internship Details
+    department: "Engineering",
+    supervisor: "Ms. Green",
+    startDate: "2024-06-01",
+    endDate: "2024-12-01",
+    status: "Under Review",
+
+    // Insurance & Emergency Details
+    insuranceCompany: "Insurance Co",
+    policyNo: "IP45678",
+    expiryDate: "2025-12-31",
+    emergencyContact: "Mark Johnson",
+    emergencyPhone: "0654321098",
+    emergencyEmail: "mark.johnson@example.com",
+
+    // Uploaded Documents
+    documents: [
+      {
+        name: "ID/Passport Document",
+        url: "#",
+      },
+      {
+        name: "Academic Document",
+        url: "#",
+      },
+      {
+        name: "Insurance Cover Document",
+        url: "#",
+      },
+    ],
   };
 
   const handleFilterClick = (key, value) => {
@@ -105,7 +156,7 @@ const DataTable = ({
                 setCurrentPage(1);
               }}
               placeholder={searchPlaceholder}
-              className="w-[40rem] pl-12 pr-4 py-2 font-semibold text-gray-600 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-transparent"
+              className="w-[35rem] pl-12 pr-4 py-2 font-semibold text-gray-600 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-transparent"
             />
             {searchQuery && (
               <button
@@ -131,13 +182,16 @@ const DataTable = ({
                       onClick={() =>
                         handleFilterClick(filter.key, option.value)
                       }
-                      className={`px-4 py-2 text-sm shadow-md font-medium rounded-lg transition-colors
+                      className={`px-5 py-2 text-sm shadow-md font-medium rounded-md transition-colors flex items-center gap-2
                         ${
                           activeFilters[filter.key] === option.value
                             ? "bg-green-600 text-white"
-                            : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                            : "bg-gray-200 text-gray-700 hover:bg-gray-300"
                         }`}
                     >
+                      {activeFilters[filter.key] === option.value && (
+                        <FaCheck className="h-4 w-4" />
+                      )}
                       {option.label}
                     </button>
                   ))}
@@ -177,13 +231,14 @@ const DataTable = ({
             {currentData.map((item, index) => (
               <tr
                 key={item.id || index}
-                onClick={() => onRowClick?.(item)}
-                className="border-x border-gray-300 hover:bg-amber-50 cursor-pointer"
+                // onClick={() => setSelectedApplication(item)}
+                onClick={() => setSelectedApplication(sampleApplication)}
+                className="border-x border-gray-300 hover:bg-amber-100 cursor-pointer"
               >
                 {columns.map((column) => (
                   <td
                     key={column.accessor}
-                    className="px-6 py-3 text-sm border-b border-gray-200 text-gray-600"
+                    className="px-6 py-4 text-sm border-b border-gray-200 text-gray-600"
                   >
                     {column.render
                       ? column.render(item)
@@ -194,6 +249,23 @@ const DataTable = ({
             ))}
           </tbody>
         </table>
+
+        {selectedApplication && (
+        <ApplicationDetails
+          application={selectedApplication}
+          isOpen={!!selectedApplication}
+          onClose={() => setSelectedApplication(null)}
+          onEdit={() => {
+            // Handle edit logic
+            console.log("Edit application:", selectedApplication);
+          }}
+          onDelete={() => {
+            // Handle delete logic
+            console.log("Delete application:", selectedApplication);
+            setSelectedApplication(null);
+          }}
+        />
+      )}
         {/* Pagination */}
         <div className="flex items-center border-x border-b rounded-b-2xl border-gray-300 justify-between px-6 py-4">
           <div className="flex items-center gap-4">
@@ -265,6 +337,7 @@ const DataTable = ({
           </div>
         </div>
       </div>
+      
     </div>
   );
 };

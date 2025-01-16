@@ -1,15 +1,16 @@
 import React from "react";
-import { IoDocumentText } from "react-icons/io5";
+import { IoArchive, IoDocumentText } from "react-icons/io5";
 import { TbReportAnalytics } from "react-icons/tb";
 import { FaRegClock } from "react-icons/fa";
 import { AiOutlineEdit } from "react-icons/ai";
-import { MdOutlineAdminPanelSettings, MdPendingActions } from "react-icons/md";
+import { MdEditCalendar, MdOutlineAdminPanelSettings } from "react-icons/md";
+
 import {
   FaFileCircleCheck,
   FaFileCircleExclamation,
   FaFileSignature,
 } from "react-icons/fa6";
-import { BsArchive } from "react-icons/bs";
+import { BsArchive, BsUiChecks } from "react-icons/bs";
 import { BiSolidReport } from "react-icons/bi";
 
 const SideNavbar = ({ activeItem = "all", onMenuClick }) => {
@@ -30,19 +31,19 @@ const SideNavbar = ({ activeItem = "all", onMenuClick }) => {
     {
       id: "approved",
       label: "Approved Applications",
-      icon: FaFileCircleCheck,
+      icon: BsUiChecks,
       count: null,
     },
     {
       id: "archived",
       label: "Archived Applications",
-      icon: BsArchive,
+      icon: IoArchive,
       count: null,
     },
     {
       id: "extend",
       label: "Extend Internship Period",
-      icon: FaRegClock,
+      icon: MdEditCalendar,
       count: null,
     },
     {
