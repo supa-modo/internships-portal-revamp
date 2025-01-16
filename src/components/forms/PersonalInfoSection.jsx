@@ -6,14 +6,14 @@ const PersonalInfoSection = ({ formData, handleChange, errors }) => {
   return (
     <div className="space-y-5">
       <div className="flex items-center gap-2 mb-4">
-        <FaUser className="text-primary-600 w-6 h-6 mr-2" />
+        <FaUser className="text-primary-600 w-7 h-7 mr-2" />
         <h2 className="text-xl font-bold font-nunito-sans text-amber-700">
           Personal Information
         </h2>
       </div>
 
       {/* First Row: Three Input Fields */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
         <FormInput
           label="Surname"
           name="surname"
@@ -40,7 +40,7 @@ const PersonalInfoSection = ({ formData, handleChange, errors }) => {
       </div>
 
       {/* Second Row: Three Input Fields */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
         <FormInput
           label="Email"
           name="email"
@@ -69,7 +69,7 @@ const PersonalInfoSection = ({ formData, handleChange, errors }) => {
       </div>
 
       {/* Third Row: Two Input Fields */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-2 md:grid-cols-2 gap-6">
         <FormInput
           label="ID/Passport Number"
           name="idPassportNumber"

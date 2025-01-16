@@ -20,6 +20,7 @@ import AcademicInfoSection from "../components/forms/AcademicInfoSection";
 import InsuranceInfoSection from "../components/forms/InsuranceInfoSection";
 import EmergencyContactSection from "../components/forms/EmergencyContactSection";
 import StepProgressIndicator from "../components/common/StepIndicator";
+import NotificationModal from "../components/common/NotificationModal";
 
 const ApplicationForm = () => {
   const navigate = useNavigate();
@@ -59,6 +60,18 @@ const ApplicationForm = () => {
   const [errors, setErrors] = useState({});
   const [submitError, setSubmitError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Notification State
+  const [notification, setNotification] = useState({
+    isOpen: false,
+    type: "success", // or 'error'
+    title: "",
+    message: "",
+  });
+
+  const closeNotification = () => {
+    setNotification((prev) => ({ ...prev, isOpen: false }));
+  };
 
   // Progress calculation
   const progress = (currentStep / totalSteps) * 100;
@@ -214,10 +227,19 @@ const ApplicationForm = () => {
 
       if (!response.ok) throw new Error("Submission failed");
 
-      toast.success("Application submitted successfully!");
-      navigate("/application-success");
+      setNotification({
+        isOpen: true,
+        type: "success",
+        title: "Success",
+        message: "Application submitted successfully!",
+      });
     } catch (error) {
-      toast.error("Failed to submit application. Please try again.");
+      setNotification({
+        isOpen: true,
+        type: "error",
+        title: "Error",
+        message: "Failed to submit application. Please check your internet connection and try again.",
+      });
     } finally {
       setIsSubmitting(false);
     }
@@ -239,10 +261,11 @@ const ApplicationForm = () => {
 
       <main className="max-w-screen-xl mx-auto px-4 py-6">
         <h2 className="text-2xl font-bold text-center mb-3 text-gray-500">
-          Internship Application
+          Internship Application Form
         </h2>
         <p className="text-center text-gray-600 mb-6">
-          Kindly fill in the sections in all the steps below to apply for an internship.
+          Kindly fill in the sections in all the steps below to apply for an
+          internship.
         </p>
         {/* Step Indicators */}
         <StepProgressIndicator currentStep={currentStep} totalSteps={5} />
@@ -293,7 +316,7 @@ const ApplicationForm = () => {
                 <button
                   type="button"
                   onClick={handlePrevious}
-                  className="px-6 py-2 text-gray-600 hover:text-gray-800"
+                  className="px-9 py-2 text-gray-600 bg-gray-200 rounded-md font-semibold  hover:text-gray-800"
                 >
                   Previous
                 </button>
@@ -302,7 +325,7 @@ const ApplicationForm = () => {
                 <button
                   type="button"
                   onClick={handleNext}
-                  className="ml-auto px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
+                  className="ml-auto px-10 py-2 bg-primary-600 text-white rounded-md font-semibold hover:bg-primary-700"
                 >
                   Next
                 </button>
@@ -310,10 +333,13 @@ const ApplicationForm = () => {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="ml-auto px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+                  className="ml-auto px-9 py-2 bg-green-600 font-semibold text-white rounded-md hover:bg-green-700"
                 >
                   {isSubmitting ? (
-                    <FaSpinner className="animate-spin" />
+                    <div className="flex items-center">
+                      <FaSpinner className="animate-spin mr-2" />
+                      Submitting...
+                    </div>
                   ) : (
                     "Submit Application"
                   )}
@@ -323,6 +349,15 @@ const ApplicationForm = () => {
           </form>
         </div>
       </main>
+
+      {/* Notification Modal */}
+      <NotificationModal
+        isOpen={notification.isOpen}
+        onClose={closeNotification}
+        title={notification.title}
+        message={notification.message}
+        type={notification.type}
+      />
     </div>
   );
 };

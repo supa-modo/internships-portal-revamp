@@ -88,27 +88,37 @@ const FileUploadInput = ({
           className="hidden"
         />
 
-        <div className="space-y-2 text-center">
-          <FaUpload className="mx-auto h-8 w-8 text-gray-400" />
-          <div className="text-sm text-gray-600">
-            <button
-              type="button"
+        {/* File Upload Content */}
+        <div className="flex items-center">
+          {!currentFile && (
+            <div
+              className="space-y-2 mx-auto cursor-pointer"
               onClick={() => fileInputRef.current?.click()}
-              className="text-primary-600 hover:text-primary-500 font-medium"
             >
-              Click to upload
-            </button>
-            {" or drag and drop"}
-          </div>
-          <p className="text-xs text-gray-500">
-            {description ||
-              `${accept.split(",").join(", ")} up to ${maxSize}MB`}
-          </p>
-        </div>
+               
+                <div className="flex items-center w-full justify-center space-x-3">
+                <FaUpload className="h-9 w-9 text-gray-400" />
+                <div className="flex flex-col text-sm text-gray-600">
+                  <button
+                    type="button"
+                    className="text-primary-600 hover:text-primary-500 font-bold font-nunito-sans"
+                  >
+                    <span>Click to Upload</span>
+                  </button>
+                  <span>or drag and drop</span>
+                </div>
+                </div>
+              
+              <p className="text-xs text-gray-500">
+                {description ||
+                  `${accept.split(",").join(", ")} up to ${maxSize}MB`}
+              </p>
+            </div>
+          )}
 
-        {currentFile && (
-          <div className="mt-4 p-3 bg-gray-50 rounded-lg">
-            <div className="flex items-center justify-between">
+          {/* File Name Display (Shown when a file is chosen) */}
+          {currentFile && (
+            <div className="flex items-center justify-between w-full">
               <div className="flex items-center space-x-2">
                 <FaFile className="text-gray-400" />
                 <span className="text-sm text-gray-600">
@@ -123,8 +133,8 @@ const FileUploadInput = ({
                 <FaTimes />
               </button>
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
 
       {error && <p className="text-sm text-red-600 mt-1">{error}</p>}

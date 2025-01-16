@@ -4,17 +4,17 @@ import FormInput from "./FormInput";
 
 const InsuranceInfoSection = ({ formData, handleChange, errors }) => {
   return (
-    <div className="space-y-6">
-      <div className="flex items-center gap-2 mb-6">
-        <FaShieldAlt className="text-primary-600 w-5 h-5" />
-        <h2 className="text-xl font-semibold text-gray-800">
+    <div className="space-y-5">
+      <div className="flex items-center gap-2 mb-4">
+        <FaShieldAlt className="text-primary-600 w-7 h-7 mr-2" />
+        <h2 className="text-xl font-bold font-nunito-sans text-amber-700">
           Insurance Information
         </h2>
       </div>
 
       <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-6">
-        <div className="flex items-start gap-3">
-          <FaExclamationCircle className="text-amber-500 w-5 h-5 mt-0.5" />
+        <div className="flex items-start gap-4">
+          <FaExclamationCircle className="text-amber-500 w-6 h-6 mt-0.5" />
           <div>
             <h4 className="text-sm font-semibold text-amber-800">
               Important Notice
@@ -27,7 +27,7 @@ const InsuranceInfoSection = ({ formData, handleChange, errors }) => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <FormInput
           label="Insurance Policy Number"
           name="insurancePolicyNumber"
@@ -56,7 +56,7 @@ const InsuranceInfoSection = ({ formData, handleChange, errors }) => {
           required
           min={new Date().toISOString().split("T")[0]}
         />
-        <div className="md:col-span-2">
+        <div className="md:col-span-3">
           <FileUploadInput
             label="Insurance Policy Document"
             name="insuranceDocument"

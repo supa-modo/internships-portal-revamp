@@ -1,13 +1,13 @@
 import { FaInfoCircle } from "react-icons/fa";
 import FormInput from "./FormInput";
-import { FaPhone } from "react-icons/fa6";
+import { GrEmergency } from "react-icons/gr";
 
 const EmergencyContactSection = ({ formData, handleChange, errors }) => {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-2 mb-6">
-        <FaPhone className="text-primary-600 w-5 h-5" />
-        <h2 className="text-xl font-semibold text-gray-800">
+        <GrEmergency  className="text-primary-600 w-8 h-8 mr-2" />
+        <h2 className="text-xl font-bold font-nunito-sans text-amber-700">
           Emergency Contact Information
         </h2>
       </div>
@@ -58,17 +58,7 @@ const EmergencyContactSection = ({ formData, handleChange, errors }) => {
           required
           placeholder="email@example.com"
         />
-        <div className="md:col-span-2">
-          <FormInput
-            label="Relationship to Applicant"
-            name="emergencyContactRelationship"
-            value={formData.emergencyContactRelationship}
-            onChange={handleChange}
-            error={errors.emergencyContactRelationship}
-            required
-            placeholder="e.g., Parent, Spouse, Sibling"
-          />
-        </div>
+       
       </div>
     </div>
   );

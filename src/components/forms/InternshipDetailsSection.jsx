@@ -30,15 +30,15 @@ const InternshipDetailsSection = ({ formData, handleChange, errors }) => {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center gap-2 mb-6">
-        <FaBriefcase className="text-primary-600 w-5 h-5" />
-        <h2 className="text-xl font-semibold text-gray-800">
+    <div className="">
+      <div className="flex items-center gap-2 mb-4">
+        <FaBriefcase className="text-primary-600 w-7 h-7 mr-2" />
+        <h2 className="text-xl font-bold font-nunito-sans text-amber-700">
           Internship Details
         </h2>
       </div>
 
-      <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
+      <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-5">
         <div className="flex items-start gap-3">
           <FaClock className="text-green-500 w-5 h-5 mt-0.5" />
           <div>
@@ -64,12 +64,12 @@ const InternshipDetailsSection = ({ formData, handleChange, errors }) => {
             value={formData.internshipDepartment}
             onChange={handleChange}
             className={`
-              w-full px-4 py-2.5 rounded-lg border bg-white
-              focus:ring-2 focus:ring-offset-0 focus:outline-none
+              w-full px-4 py-2 font-semibold font-nunito-sans rounded-lg border bg-white
+              focus:ring-1 focus:ring-offset-0 focus:outline-none
               ${
                 errors.internshipDepartment
                   ? "border-red-300 focus:border-red-500 focus:ring-red-200"
-                  : "border-gray-300 focus:border-primary-500 focus:ring-primary-200"
+                  : "border-gray-300  focus:outline-none focus:ring-1 focus:ring-primary-600 focus:border-primary-600"
               }
             `}
             required
@@ -113,20 +113,19 @@ const InternshipDetailsSection = ({ formData, handleChange, errors }) => {
 
         <div className="md:col-span-2">
           <FormInput
-            label="Additional Notes"
             name="internshipNotes"
             value={formData.internshipNotes}
             onChange={handleChange}
             error={errors.internshipNotes}
-            placeholder="Any specific requirements or information you'd like to share"
+            placeholder="Any specific requirements or additional information you'd like to share"
             as="textarea"
             rows={4}
           />
         </div>
       </div>
 
-      <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-        <h4 className="text-sm font-semibold text-gray-700 mb-2">
+      <div className="mt-4 p-4 bg-gray-50 rounded-lg">
+        <h4 className="text-sm sm:text-[15px] font-bold font-nunito-sans text-gray-700 mb-2">
           Declaration
         </h4>
         <div className="flex items-start gap-3">
