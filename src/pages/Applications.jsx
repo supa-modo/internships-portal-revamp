@@ -224,7 +224,7 @@ const ApplicationForm = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-100">
       <Header />
 
       {/* Progress Bar */}
@@ -238,7 +238,7 @@ const ApplicationForm = () => {
       </div>
 
       <main className="max-w-screen-xl mx-auto px-4 py-6">
-        <h2 className="text-2xl font-bold text-center mb-3">
+        <h2 className="text-2xl font-bold text-center mb-3 text-gray-500">
           Internship Application
         </h2>
         <p className="text-center text-gray-600 mb-6">

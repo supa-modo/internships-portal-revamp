@@ -53,7 +53,7 @@ const StepProgressIndicator = ({ currentStep, totalSteps = 5 }) => {
                 {/* Step circle */}
                 <div
                   className={`
-                    w-14 h-14 rounded-full flex items-center justify-center
+                    w-16 h-16 rounded-full flex items-center justify-center
                     transition-all duration-300 z-10
                     ${
                       isCompleted
@@ -65,19 +65,19 @@ const StepProgressIndicator = ({ currentStep, totalSteps = 5 }) => {
                     ${isCompleted || isActive ? "text-white" : "text-gray-400"}
                   `}
                 >
-                  <Icon className="w-6 h-6" />
+                  <Icon className="w-7 h-7" />
                 </div>
 
                 {/* Label */}
                 <span
                   className={`
-                  mt-2 text-xs sm:text-sm font-medium text-center
+                  mt-2 text-xs sm:text-sm font-semibold font-nunito-sans text-center
                   ${
                     isActive
                       ? "text-primary-600"
                       : isCompleted
                       ? "text-primary-600"
-                      : "text-gray-400"
+                      : "text-gray-500"
                   }
                 `}
                 >

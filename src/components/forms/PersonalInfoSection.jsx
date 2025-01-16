@@ -4,10 +4,10 @@ import FileUploadInput from "./FileUploadInput";
 
 const PersonalInfoSection = ({ formData, handleChange, errors }) => {
   return (
-    <div className="space-y-6">
-      <div className="flex items-center gap-2 mb-6">
-        <FaUser className="text-primary-600 w-5 h-5" />
-        <h2 className="text-xl font-semibold text-gray-800">
+    <div className="space-y-5">
+      <div className="flex items-center gap-2 mb-4">
+        <FaUser className="text-primary-600 w-6 h-6 mr-2" />
+        <h2 className="text-xl font-bold font-nunito-sans text-amber-700">
           Personal Information
         </h2>
       </div>
