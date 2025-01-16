@@ -21,6 +21,7 @@ import InsuranceInfoSection from "../components/forms/InsuranceInfoSection";
 import EmergencyContactSection from "../components/forms/EmergencyContactSection";
 import StepProgressIndicator from "../components/common/StepIndicator";
 import NotificationModal from "../components/common/NotificationModal";
+import Footer from "../components/common/Footer";
 
 const ApplicationForm = () => {
   const navigate = useNavigate();
@@ -349,6 +350,7 @@ const ApplicationForm = () => {
           </form>
         </div>
       </main>
+      <Footer />
 
       {/* Notification Modal */}
       <NotificationModal

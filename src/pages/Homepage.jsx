@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import Header from "../components/common/Header";
 import policyData from "../data/policyContent.json";
 import { FaArrowRight } from "react-icons/fa";
+import Footer from "../components/common/Footer";
 
 const HomePage = () => {
   const navigate = useNavigate();
@@ -10,7 +11,7 @@ const HomePage = () => {
     <div className="min-h-screen bg-gray-100">
       <Header />
 
-      <main className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <main className="max-w-screen-2xl mx-auto px-4  sm:px-6 lg:px-8 py-6">
         <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
           {/* Policy Header */}
           <div className="bg-green-700 text-center px-5 py-5 sm:px-8 sm:py-6">
@@ -60,6 +61,7 @@ const HomePage = () => {
           </div>
         </div>
       </main>
+      {/* <Footer /> */}
     </div>
   );
 };
