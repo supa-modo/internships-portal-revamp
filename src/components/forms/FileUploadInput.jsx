@@ -69,7 +69,7 @@ const FileUploadInput = ({
 
       <div
         className={`
-          relative border-2 border-dashed rounded-lg p-6
+          relative border-2 border-dashed rounded-lg p-4 sm:p-6
           ${isDragging ? "border-primary-500 bg-primary-50" : "border-gray-300"}
           ${error ? "border-red-300" : ""}
           transition-colors duration-200

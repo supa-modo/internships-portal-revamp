@@ -58,16 +58,16 @@ const NotificationModal = ({
         <div className="flex flex-col items-center text-center">
           {icons[type]}
 
-          <h3 className="mt-2 text-lg font-semibold text-gray-500">{title}</h3>
+          <h3 className="mt-2 sm:text-lg font-semibold text-gray-500">{title}</h3>
 
-          <p className="mt-2 text-gray-600">{message}</p>
+          <p className="mt-2 text-sm sm:text-base text-gray-600">{message}</p>
 
           {/* Buttons */}
           <div className="mt-6 flex gap-3 w-full">
             {type === "confirm" && (
               <button
                 onClick={onClose}
-                className="flex-1 px-4 py-2 text-gray-600 font-semibold bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+                className="flex-1 px-4 py-2.5 sm:py-2 text-sm sm:text-base text-gray-600 font-semibold bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
               >
                 {cancelText}
               </button>
@@ -75,7 +75,7 @@ const NotificationModal = ({
 
             <button
               onClick={type === "confirm" ? onConfirm : onClose}
-              className={`flex-1 px-4 py-2 font-semibold text-white rounded-lg transition-colors ${confirmButtonColors[type]}`}
+              className={`flex-1 px-4 py-2.5 sm:py-2 text-sm sm:text-base font-semibold text-white rounded-lg transition-colors ${confirmButtonColors[type]}`}
             >
               {type === "confirm" ? confirmText : "OK"}
             </button>

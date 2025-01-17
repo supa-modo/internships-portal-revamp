@@ -25,7 +25,7 @@ const FormInput = ({
         onChange={onChange}
         required={required}
         className={`
-          w-full px-4 py-2 font-semibold font-nunito-sans text-gray-700 rounded-lg border
+          w-full px-4 py-2.5 sm:py-2 text-sm sm:text-base font-semibold font-nunito-sans text-gray-700 rounded-lg border
           focus:ring-1 focus:ring-offset-0 focus:outline-none
           transition-colors duration-200
           ${

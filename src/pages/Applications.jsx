@@ -261,10 +261,10 @@ const ApplicationForm = () => {
       </div>
 
       <main className="max-w-screen-xl mx-auto px-4 py-6">
-        <h2 className="text-2xl font-bold text-center mb-3 text-gray-500">
+        <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-center mb-3 text-gray-500">
           Internship Application Form
         </h2>
-        <p className="text-center text-gray-600 mb-6">
+        <p className="text-sm sm:text-base text-center text-gray-600 mb-6">
           Kindly fill in the sections in all the steps below to apply for an
           internship.
         </p>
@@ -272,7 +272,7 @@ const ApplicationForm = () => {
         <StepProgressIndicator currentStep={currentStep} totalSteps={5} />
 
         {/* Form Content */}
-        <div className="bg-white rounded-xl shadow-lg p-6">
+        <div className="bg-white rounded-xl shadow-lg px-4 sm:px-6 py-6">
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Render different form sections based on currentStep */}
             {currentStep === 1 && (
@@ -317,7 +317,7 @@ const ApplicationForm = () => {
                 <button
                   type="button"
                   onClick={handlePrevious}
-                  className="px-9 py-2 text-gray-600 bg-gray-200 rounded-md font-semibold  hover:text-gray-800"
+                  className="px-7 sm:px-9 py-2 text-sm sm:text-base text-gray-600 bg-gray-200 rounded-md font-semibold  hover:text-gray-800"
                 >
                   Previous
                 </button>
@@ -326,7 +326,7 @@ const ApplicationForm = () => {
                 <button
                   type="button"
                   onClick={handleNext}
-                  className="ml-auto px-10 py-2 bg-primary-600 text-white rounded-md font-semibold hover:bg-primary-700"
+                  className="ml-auto px-8 text-sm sm:text-base sm:px-10 py-2 bg-primary-600 text-white rounded-md font-semibold hover:bg-primary-700"
                 >
                   Next
                 </button>

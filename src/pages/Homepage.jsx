@@ -18,7 +18,7 @@ const HomePage = () => {
             <h2 className="text-[15px] sm:text-lg md:text-2xl font-nunito-sans font-extrabold text-white">
               East African Community Internship Policy
             </h2>
-            <p className="mt-2 text-sm md:text-base text-primary-100">
+            <p className="mt-2 text-[13px] md:text-base text-primary-100">
               Please review our internship policy before proceeding with your
               application
             </p>
@@ -30,7 +30,7 @@ const HomePage = () => {
               {policyData.content.map((item, index) => (
                 <div key={index} className="space-y-4">
                   {item.section && (
-                    <h3 className="text-base font-bold font-nunito-sans text-gray-600">
+                    <h3 className="text-sm sm:text-base font-bold font-nunito-sans text-gray-600">
                       {item.section}
                     </h3>
                   )}
@@ -38,7 +38,7 @@ const HomePage = () => {
                     {item.paragraphs.map((paragraph, pIndex) => (
                       <p
                         key={pIndex}
-                        className="text-gray-600 text-sm md:text-base font-nunito-sans leading-relaxed"
+                        className="text-gray-600 text-[13px] sm:text-sm md:text-base font-nunito-sans leading-relaxed"
                       >
                         {paragraph}
                       </p>
@@ -52,7 +52,7 @@ const HomePage = () => {
             <div className="mt-12 flex justify-center">
               <button
                 onClick={() => navigate("/applications")}
-                className="inline-flex items-center space-x-3 px-6 py-3 text-sm md:text-base border border-transparent  font-semibold rounded-lg shadow-md text-white bg-primary-700 hover:bg-primary-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-600 transition-colors duration-200"
+                className="inline-flex items-center space-x-3 px-6 py-3 text-[13px] sm:text-sm md:text-base border border-transparent  font-semibold rounded-lg shadow-md text-white bg-primary-700 hover:bg-primary-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-600 transition-colors duration-200"
               >
                 <span>Continue to Application</span>
                 <FaArrowRight />

@@ -32,8 +32,8 @@ const InternshipDetailsSection = ({ formData, handleChange, errors }) => {
   return (
     <div className="">
       <div className="flex items-center gap-2 mb-4">
-        <FaBriefcase className="text-primary-600 w-7 h-7 mr-2" />
-        <h2 className="text-xl font-bold font-nunito-sans text-amber-700">
+        <FaBriefcase className="text-primary-600 w-7 h-7 sm:w-8 sm:h-8 mr-2" />
+        <h2 className="text-lg sm:text-xl font-bold font-nunito-sans text-amber-700">
           Internship Details
         </h2>
       </div>
@@ -64,7 +64,7 @@ const InternshipDetailsSection = ({ formData, handleChange, errors }) => {
             value={formData.internshipDepartment}
             onChange={handleChange}
             className={`
-              w-full px-4 py-2 font-semibold font-nunito-sans rounded-lg border bg-white
+              w-full px-4 py-2.5 sm:py-2 text-sm sm:text-base font-semibold font-nunito-sans rounded-lg border bg-white
               focus:ring-1 focus:ring-offset-0 focus:outline-none
               ${
                 errors.internshipDepartment

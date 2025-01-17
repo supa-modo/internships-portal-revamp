@@ -6,8 +6,8 @@ const InsuranceInfoSection = ({ formData, handleChange, errors }) => {
   return (
     <div className="space-y-5">
       <div className="flex items-center gap-2 mb-4">
-        <FaShieldAlt className="text-primary-600 w-7 h-7 mr-2" />
-        <h2 className="text-xl font-bold font-nunito-sans text-amber-700">
+        <FaShieldAlt className="text-primary-600 w-7 h-7 sm:w-8 sm:h-8 mr-2" />
+        <h2 className="text-lg sm:text-xl font-bold font-nunito-sans text-amber-700">
           Insurance Information
         </h2>
       </div>
