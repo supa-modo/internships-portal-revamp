@@ -1,5 +1,6 @@
 // src/context/AuthContext.jsx
 import { createContext, useContext, useState, useEffect } from "react";
+import { loginUser } from "../services/authService";
 
 const AuthContext = createContext(null);
 
@@ -9,40 +10,39 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    const checkAuthStatus = async () => {
-      try {
-        // Check if token exists in localStorage
-        const token = localStorage.getItem("token");
+    const checkAuth = () => {
+      const token = localStorage.getItem("token");
+      const userData = localStorage.getItem("user");
 
-        if (token) {
-          // You can add your token validation logic here if needed
-          setIsAuthenticated(true);
-          // You can also fetch user data here if needed
-          // const userData = await fetchUserData();
-          // setUser(userData);
-        }
-      } catch (error) {
-        console.error("Auth check failed:", error);
-        // Clear potentially invalid token
-        localStorage.removeItem("token");
+      if (token && userData) {
+        setIsAuthenticated(true);
+        setUser(JSON.parse(userData));
+      } else {
         setIsAuthenticated(false);
         setUser(null);
-      } finally {
-        setIsLoading(false);
       }
+      setIsLoading(false);
     };
 
-    checkAuthStatus();
+    checkAuth();
   }, []);
 
-  const login = (token, userData) => {
-    localStorage.setItem("token", token);
-    setIsAuthenticated(true);
-    setUser(userData);
+  const login = async (credentials) => {
+    try {
+      const { token, user } = await loginUser(credentials);
+      localStorage.setItem("token", token);
+      localStorage.setItem("user", JSON.stringify(user));
+      setIsAuthenticated(true);
+      setUser(user);
+      return { success: true };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
   };
 
   const logout = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("user");
     setIsAuthenticated(false);
     setUser(null);
   };
@@ -54,14 +54,6 @@ export const AuthProvider = ({ children }) => {
     login,
     logout,
   };
-
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        Loading...
-      </div>
-    );
-  }
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

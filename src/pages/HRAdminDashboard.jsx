@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Header from "../components/common/Header";
 import DataTable from "../components/common/DataTable";
 import SideNavbar from "../components/dashboard/SideNavBar";
@@ -8,6 +8,8 @@ import Policy from "../components/dashboard/Policy";
 import ExtendInternship from "../components/dashboard/ExtendInternship";
 import { FaCheck } from "react-icons/fa6";
 import ApprovalModal from "../components/common/Approval";
+import { axiosInstance } from "../services/api";
+import ApplicationDetails from "../components/dashboard/ApplicationDetails";
 
 const DashboardLayout = () => {
   const [activeSection, setActiveSection] = useState("all");
@@ -15,23 +17,70 @@ const DashboardLayout = () => {
   const [isApproving, setIsApproving] = useState(false);
   const [showApprovalModal, setShowApprovalModal] = useState(false);
   const [selectedApplication, setSelectedApplication] = useState(null);
+  const [applications, setApplications] = useState([]);
 
-  // Function to generate columns based on activeSection
+  useEffect(() => {
+    fetchApplications();
+  }, [activeSection]);
+
+  const fetchApplications = async () => {
+    try {
+      const response = await axiosInstance.get("/internship-applications/", {
+        params: {
+          status: ["extend", "letters"].includes(activeSection)
+            ? "approved"
+            : activeSection !== "all"
+            ? activeSection
+            : undefined,
+        },
+      });
+      setApplications(response.data);
+      console.log(response.data);
+    } catch (error) {
+      console.error("Error fetching applications:", error);
+    }
+  };
+
   const getColumns = () => {
     const baseColumns = [
-      { header: "#", accessor: "id" },
+      {
+        header: "#",
+        accessor: "index", // Use a custom accessor
+        render: (row, index) => (
+          <span>{index + 1}</span> // Display the row index + 1 (since index starts at 0)
+        ),
+      },
       {
         header: "Applicant Name",
         accessor: "name",
         render: (row) => (
-          <span className="font-semibold text-[15px]">{row.applicantName}</span>
+          <span className="font-semibold text-[15px]">
+            {`${row.firstName} ${row.surname}`}
+          </span>
         ),
       },
-      { header: "Department", accessor: "department" },
-      { header: "Phone Number", accessor: "phone" },
-      { header: "Nationality", accessor: "nationality" },
-      { header: "Start Date", accessor: "startDate" },
-      { header: "End Date", accessor: "endDate" },
+      {
+        header: "Department",
+        accessor: "internshipDepartment",
+      },
+      {
+        header: "Phone Number",
+        accessor: "phoneNumber",
+      },
+      {
+        header: "Nationality",
+        accessor: "nationality",
+      },
+      {
+        header: "Start Date",
+        accessor: "internshipStartDate",
+        isDate: true,
+      },
+      {
+        header: "End Date",
+        accessor: "internshipEndDate",
+        isDate: true,
+      },
       {
         header: "Status",
         accessor: "status",
@@ -50,7 +99,11 @@ const DashboardLayout = () => {
           </span>
         ),
       },
-      { header: "Application Date", accessor: "applicationDate" },
+      {
+        header: "Application Date",
+        accessor: "createdAt",
+        isDate: true,
+      },
     ];
 
     if (activeSection === "under-review") {
@@ -97,195 +150,6 @@ const DashboardLayout = () => {
         ],
       },
     ],
-    data: [
-      {
-        id: 1,
-        applicantName: "John Doe",
-        department: "IT",
-        phone: "1234567890",
-        nationality: "Kenya",
-        startDate: "2024-01-15",
-        endDate: "2024-07-15",
-        status: "archived",
-        applicationDate: "2024-01-01",
-      },
-      {
-        id: 2,
-        applicantName: "Johnson Emily D",
-        department: "Procurement",
-        phone: "1234567890",
-        nationality: "Kenya",
-        startDate: "2024-01-15",
-        endDate: "2024-07-15",
-        status: "under-review",
-        applicationDate: "2024-01-01",
-      },
-      {
-        id: 3,
-        applicantName: "Jane Smith",
-        department: "Marketing",
-        phone: "1234567890",
-        nationality: "Kenya",
-        startDate: "2024-01-15",
-        endDate: "2024-07-15",
-        status: "pending",
-        applicationDate: "2024-01-01",
-      },
-      {
-        id: 4,
-        applicantName: "Jane Doe",
-        department: "Finance",
-        phone: "1234567890",
-        nationality: "Kenya",
-        startDate: "2024-01-15",
-        endDate: "2024-07-15",
-        status: "pending",
-        applicationDate: "2024-01-01",
-      },
-      {
-        id: 5,
-        applicantName: "Jane Jane",
-        department: "Human Resources",
-        phone: "1234567890",
-        nationality: "Kenya",
-        startDate: "2024-01-15",
-        endDate: "2024-07-15",
-        status: "pending",
-        applicationDate: "2024-01-01",
-      },
-      {
-        id: 6,
-        applicantName: "John Brown",
-        department: "IT",
-        phone: "1234567890",
-        nationality: "Kenya",
-        startDate: "2024-01-15",
-        endDate: "2024-07-15",
-        status: "under-review",
-        applicationDate: "2024-01-01",
-      },
-      {
-        id: 7,
-        applicantName: "Lilian Joseph",
-        department: "International Relations",
-        phone: "1234567890",
-        nationality: "Kenya",
-        startDate: "2024-01-15",
-        endDate: "2024-07-15",
-        status: "approved",
-        applicationDate: "2024-01-01",
-      },
-      {
-        id: 8,
-        applicantName: "Lisa Williams",
-        department: "Finance",
-        phone: "1234567890",
-        nationality: "Kenya",
-        startDate: "2024-01-15",
-        endDate: "2024-07-15",
-        status: "archived",
-        applicationDate: "2024-01-01",
-      },
-      {
-        id: 9,
-        applicantName: "John Doe",
-        department: "Operations",
-        phone: "1234567890",
-        nationality: "Kenya",
-        startDate: "2024-01-15",
-        endDate: "2024-07-15",
-        status: "approved",
-        applicationDate: "2024-01-01",
-      },
-      {
-        id: 10,
-        applicantName: "Jane Smith",
-        department: "Marketing",
-        phone: "1234567890",
-        nationality: "Kenya",
-        startDate: "2024-01-15",
-        endDate: "2024-07-15",
-        status: "pending",
-        applicationDate: "2024-01-01",
-      },
-      {
-        id: 11,
-        applicantName: "Jane Doe",
-        department: "Finance",
-        phone: "1234567890",
-        nationality: "Kenya",
-        startDate: "2024-01-15",
-        endDate: "2024-07-15",
-        status: "pending",
-        applicationDate: "2024-01-01",
-      },
-      {
-        id: 12,
-        applicantName: "Jane Jane",
-        department: "Human Resources",
-        phone: "1234567890",
-        nationality: "Kenya",
-        startDate: "2024-01-15",
-        endDate: "2024-07-15",
-        status: "under-review",
-        applicationDate: "2024-01-01",
-      },
-      {
-        id: 13,
-        applicantName: "John Brown",
-        department: "IT",
-        phone: "1234567890",
-        nationality: "Kenya",
-        startDate: "2024-01-15",
-        endDate: "2024-07-15",
-        status: "pending",
-        applicationDate: "2024-01-01",
-      },
-      {
-        id: 14,
-        applicantName: "John Brown",
-        department: "IT",
-        phone: "1234567890",
-        nationality: "Kenya",
-        startDate: "2024-01-15",
-        endDate: "2024-07-15",
-        status: "pending",
-        applicationDate: "2024-01-01",
-      },
-      {
-        id: 15,
-        applicantName: "John Brown",
-        department: "IT",
-        phone: "1234567890",
-        nationality: "Kenya",
-        startDate: "2024-01-15",
-        endDate: "2024-07-15",
-        status: "under-review",
-        applicationDate: "2024-01-01",
-      },
-      {
-        id: 16,
-        applicantName: "John Brown",
-        department: "IT",
-        phone: "1234567890",
-        nationality: "Kenya",
-        startDate: "2024-01-15",
-        endDate: "2024-07-15",
-        status: "pending",
-        applicationDate: "2024-01-01",
-      },
-      {
-        id: 17,
-        applicantName: "John Brown",
-        department: "IT",
-        phone: "1234567890",
-        nationality: "Kenya",
-        startDate: "2024-01-15",
-        endDate: "2024-07-15",
-        status: "under-review",
-        applicationDate: "2024-01-01",
-      },
-    ],
   };
 
   // Handle menu item clicks
@@ -307,9 +171,22 @@ const DashboardLayout = () => {
   };
 
   // Filter data based on active filter
-  const filteredData = tableConfig.data.filter((item) =>
+  const filteredData = applications.filter((item) =>
     activeFilter ? item.status === activeFilter : true
   );
+
+  const handleRowClick = (application, event) => {
+    // Check if the click was on an action button or the last column
+    if (
+      event.target.closest("button") || // Check if the click is on a button
+      event.target.closest("td:last-child") // Check if the click is on the last column
+    ) {
+      return; // Do nothing if the click is on a button or the last column
+    }
+
+    // Otherwise, set the selected application
+    setSelectedApplication(application);
+  };
 
   // Function to render the appropriate content based on active section
   const renderContent = () => {
@@ -321,23 +198,32 @@ const DashboardLayout = () => {
       case "letters":
         return <Letters />;
       case "extend":
-        return <ExtendInternship />;
+        return <ExtendInternship applications={applications} />;
       case "all":
       case "under-review":
       case "pending":
       case "approved":
       case "archived":
         return (
-          <DataTable
-            title={`${
-              activeSection.charAt(0).toUpperCase() + activeSection.slice(1)
-            } Internship Applications`}
-            columns={tableConfig.columns}
-            data={filteredData}
-            filters={tableConfig.filters}
-            searchPlaceholder="Search internship applications..."
-            onRowClick={(item) => console.log("Clicked:", item)}
-          />
+          <>
+            <DataTable
+              title={`${
+                activeSection.charAt(0).toUpperCase() + activeSection.slice(1)
+              } Internship Applications`}
+              columns={tableConfig.columns}
+              data={filteredData}
+              filters={tableConfig.filters}
+              searchPlaceholder="Search internship applications..."
+              onRowClick={(item, event) => handleRowClick(item, event)}
+            />
+            {selectedApplication && (
+              <ApplicationDetails
+                application={selectedApplication}
+                isOpen={!!selectedApplication}
+                onClose={() => setSelectedApplication(null)}
+              />
+            )}
+          </>
         );
       default:
         return (

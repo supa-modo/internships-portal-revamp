@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import { IoClose } from "react-icons/io5";
 import {
   FaUser,
@@ -38,13 +39,36 @@ const ApplicationDetails = ({
   const [notificationType, setNotificationType] = useState("confirm");
   const [notificationTitle, setNotificationTitle] = useState("");
   const [notificationMessage, setNotificationMessage] = useState("");
-  const [isSaving, setIsSaving] = useState(false); // Loading state for saving changes
+  const [isSaving, setIsSaving] = useState(false);
   const [internshipData, setInternshipData] = useState({
-    department: application.department,
+    internshipDepartment: application.internshipDepartment,
     supervisor: application.supervisor,
-    startDate: application.startDate,
-    endDate: application.endDate,
+    internshipStartDate: application.internshipStartDate,
+    internshipEndDate: application.internshipEndDate,
   });
+
+  useEffect(() => {
+    const fetchApplicationDetails = async () => {
+      if (!application?.id) return;
+
+      try {
+        const response = await axios.get(
+          `/api/internship-applications/${application.id}`
+        );
+        // Update the local state with fetched data
+        setInternshipData({
+          internshipDepartment: response.data.internshipDepartment,
+          supervisor: response.data.supervisor,
+          internshipStartDate: response.data.internshipStartDate,
+          internshipEndDate: response.data.internshipEndDate,
+        });
+      } catch (error) {
+        console.error("Error fetching application details:", error);
+      }
+    };
+
+    fetchApplicationDetails();
+  }, [application?.id]);
 
   if (!isOpen) return null;
 
@@ -55,38 +79,50 @@ const ApplicationDetails = ({
     Archived: "bg-gray-100 text-gray-800",
   };
 
-  const handleSave = () => {
-    // Open the confirmation modal
+  const handleSave = async () => {
     setNotificationType("confirm");
     setNotificationTitle("Confirm Changes");
     setNotificationMessage("Are you sure you want to save these changes?");
     setIsNotificationOpen(true);
   };
 
-  const handleConfirmSave = () => {
-    // Simulate saving changes
+  const handleConfirmSave = async () => {
     setIsSaving(true);
-    setIsNotificationOpen(false); // Close the confirmation modal
+    setIsNotificationOpen(false);
 
-    // Simulate a delay for saving changes (e.g., API call)
-    setTimeout(() => {
+    try {
+      await axios.patch(
+        `/api/internship-applications/${application.id}`,
+        internshipData
+      );
+
+      setNotificationType("success");
+      setNotificationTitle("Success");
+      setNotificationMessage("Your changes have been saved successfully.");
+      setIsEditing(false);
+    } catch (error) {
+      setNotificationType("error");
+      setNotificationTitle("Error");
+      setNotificationMessage("Failed to save changes. Please try again.");
+      console.error("Error updating application:", error);
+    } finally {
       setIsSaving(false);
+      setIsNotificationOpen(true);
+    }
+  };
 
-      // Simulate success or error
-      const isSuccess = Math.random() > 0.5; // Randomly choose success or error
-      if (isSuccess) {
-        setNotificationType("success");
-        setNotificationTitle("Success");
-        setNotificationMessage("Your changes have been saved successfully.");
-        onEdit(internshipData); // Call the onEdit prop to update the parent state
-      } else {
-        setNotificationType("error");
-        setNotificationTitle("Error");
-        setNotificationMessage("Failed to save changes. Please try again.");
-      }
-
-      setIsNotificationOpen(true); // Open the success/error modal
-    }, 2000); // 2-second delay for demonstration
+  const handleDelete = async () => {
+    try {
+      await axios.delete(`/api/internship-applications/${application.id}`);
+      onClose();
+      // You might want to trigger a refresh of the applications list here
+    } catch (error) {
+      console.error("Error deleting application:", error);
+      setNotificationType("error");
+      setNotificationTitle("Error");
+      setNotificationMessage("Failed to delete application. Please try again.");
+      setIsNotificationOpen(true);
+    }
   };
 
   const handleNotificationClose = () => {
@@ -205,10 +241,10 @@ const ApplicationDetails = ({
                     <FaUser className="w-12 h-12 text-white" />
                   </div>
                   <h3 className="text-xl font-bold text-gray-500">
-                    {application.fullName}
+                    {`${application.firstName} ${application.surname}`}
                   </h3>
                   <p className="text-sm text-gray-500 mt-1">
-                    ID/Passport: {application.passportNo}
+                    ID/Passport: {application.idPassportNumber}
                   </p>
                 </div>
 
@@ -359,7 +395,7 @@ const ApplicationDetails = ({
 
             <div className="flex items-center gap-3">
               <button
-                onClick={onDelete}
+                onClick={handleDelete}
                 className="px-6 py-2.5 text-sm font-medium text-red-600 bg-red-100 hover:bg-red-200 rounded-lg transition-colors"
               >
                 Delete Application

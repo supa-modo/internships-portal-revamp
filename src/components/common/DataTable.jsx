@@ -5,6 +5,7 @@ import { HiMiniArrowsUpDown } from "react-icons/hi2";
 import { TbChevronLeft, TbChevronRight } from "react-icons/tb";
 import { FaCheck } from "react-icons/fa6";
 import ApplicationDetails from "../dashboard/ApplicationDetails";
+import { formatDate } from "../../utils/dateFormatter";
 
 const DataTable = ({
   title,
@@ -34,54 +35,6 @@ const DataTable = ({
           ? "desc"
           : "asc",
     });
-  };
-
-  const sampleApplication = {
-    // Personal Information
-    fullName: "Johnson Emily Smith",
-    passportNo: "P45678901",
-    email: "emily.johnson@example.com",
-    phone: "4567890123",
-    nationality: "Rwanda",
-    address: "101 Maple St, Kigali",
-    dateSubmitted: "October 30, 2024",
-
-    // Education Details
-    institution: "University D",
-    course: "Electrical Engineering",
-    currentYear: "3",
-    academicAward: "Bachelor",
-
-    // Internship Details
-    department: "Engineering",
-    supervisor: "Ms. Green",
-    startDate: "2024-06-01",
-    endDate: "2024-12-01",
-    status: "Under Review",
-
-    // Insurance & Emergency Details
-    insuranceCompany: "Insurance Co",
-    policyNo: "IP45678",
-    expiryDate: "2025-12-31",
-    emergencyContact: "Mark Johnson",
-    emergencyPhone: "0654321098",
-    emergencyEmail: "mark.johnson@example.com",
-
-    // Uploaded Documents
-    documents: [
-      {
-        name: "ID/Passport Document",
-        url: "#",
-      },
-      {
-        name: "Academic Document",
-        url: "#",
-      },
-      {
-        name: "Insurance Cover Document",
-        url: "#",
-      },
-    ],
   };
 
   const handleFilterClick = (key, value) => {
@@ -137,6 +90,30 @@ const DataTable = ({
 
   const goToPage = (page) => {
     setCurrentPage(Math.max(1, Math.min(page, totalPages)));
+  };
+
+  // Update the render function for date columns
+  const renderCell = (column, item, index) => {
+    if (column.accessor === "index") {
+      return index + 1; // Return the row index + 1 for the "#" column
+    }
+    if (column.isDate) {
+      return formatDate(item[column.accessor]);
+    }
+    return column.render ? column.render(item) : item[column.accessor];
+  };
+
+  const handleRowClick = (item, event) => {
+    // Check if the click was on an action button or the last column
+    if (
+      event.target.closest("button") || // Check if the click is on a button
+      event.target.closest("td:last-child") // Check if the click is on the last column
+    ) {
+      return; // Do nothing if the click is on a button or the last column
+    }
+
+    // Otherwise, call the onRowClick handler with the entire row data
+    onRowClick && onRowClick(item, event);
   };
 
   return (
@@ -237,7 +214,7 @@ const DataTable = ({
             {currentData.map((item, index) => (
               <tr
                 key={item.id || index}
-                onClick={() => setSelectedApplication(sampleApplication)}
+                onClick={(e) => handleRowClick(item, e)} // Pass both item and event
                 className="border-x border-gray-300 hover:bg-amber-100 cursor-pointer"
               >
                 {columns.map((column) => (
@@ -245,9 +222,7 @@ const DataTable = ({
                     key={column.accessor}
                     className="px-6 py-4 text-sm border-b border-gray-200 text-gray-600"
                   >
-                    {column.render
-                      ? column.render(item)
-                      : item[column.accessor]}
+                    {renderCell(column, item, index)}
                   </td>
                 ))}
               </tr>

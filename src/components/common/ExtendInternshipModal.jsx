@@ -3,16 +3,18 @@ import { IoClose } from "react-icons/io5";
 import { HiCalendar } from "react-icons/hi2";
 import { FaRegUser } from "react-icons/fa6";
 import { FaBuildingColumns } from "react-icons/fa6";
-import NotificationModal from "../common/NotificationModal"; // Ensure this path is correct
+import NotificationModal from "../common/NotificationModal";
+import { axiosInstance } from "../../services/authService";
+import { formatDate } from "../../utils/dateFormatter";
 
 const ExtensionModal = ({ isOpen, onClose, internship, onSubmit }) => {
   const [newEndDate, setNewEndDate] = useState("");
   const [requestDate, setRequestDate] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [mounted, setMounted] = useState(false);
-  const [notificationOpen, setNotificationOpen] = useState(false); // State for NotificationModal
-  const [notificationType, setNotificationType] = useState("success"); // Type of notification
-  const [notificationMessage, setNotificationMessage] = useState(""); // Message for notification
+  const [notificationOpen, setNotificationOpen] = useState(false);
+  const [notificationType, setNotificationType] = useState("success");
+  const [notificationMessage, setNotificationMessage] = useState("");
 
   useEffect(() => {
     if (isOpen) {
@@ -28,28 +30,30 @@ const ExtensionModal = ({ isOpen, onClose, internship, onSubmit }) => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Simulate an API call
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    try {
+      await axiosInstance.patch(
+        `/internship-applications/${internship.id}/extend`,
+        {
+          newEndDate,
+          requestDate,
+        }
+      );
 
-    // Simulate success or error randomly
-    const isSuccess = Math.random() > 0.5; // Randomly choose success or error
-    if (isSuccess) {
       setNotificationType("success");
       setNotificationMessage(
         "Internship extension request processed successfully."
       );
-    } else {
+      onSubmit?.({ newEndDate, requestDate });
+    } catch (error) {
       setNotificationType("error");
       setNotificationMessage(
         "Failed to process internship extension request. Please try again."
       );
+      console.error("Error extending internship:", error);
+    } finally {
+      setIsSubmitting(false);
+      setNotificationOpen(true);
     }
-
-    // Call the onSubmit prop with the new dates
-    onSubmit({ newEndDate, requestDate });
-
-    setIsSubmitting(false);
-    setNotificationOpen(true); // Open the notification modal
   };
 
   const handleNotificationClose = () => {
@@ -95,26 +99,28 @@ const ExtensionModal = ({ isOpen, onClose, internship, onSubmit }) => {
             <form onSubmit={handleSubmit}>
               <div className="px-8 py-4 space-y-6">
                 {/* Intern Info Card */}
-                <div className="bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl px-6 py-4 border border-primary-100/50">
+                <div className="bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl px-6 py-4">
                   <div className="flex gap-5">
                     <div className="bg-primary-500/10 h-fit rounded-lg p-3">
-                      <FaRegUser size={60} className=" text-primary-700" />
+                      <FaRegUser size={60} className="text-primary-700" />
                     </div>
                     <div className="space-y-3">
                       <h3 className="font-semibold text-primary-700 text-lg">
-                        {internship.applicantName}
+                        {`${internship.firstName} ${internship.surname}`}
                       </h3>
                       <div className="space-y-1">
                         <p className="text-sm font-semibold text-primary-700 flex items-center gap-2">
                           <FaBuildingColumns className="w-4 h-4" />
-                          <span>Department: {internship.department}</span>
+                          <span>
+                            Department: {internship.internshipDepartment}
+                          </span>
                         </p>
                         <p className="text-sm font-semibold text-red-700 flex items-center gap-2">
                           <HiCalendar className="w-4 h-4" />
                           <span>
-                            {internship.startDate}{" "}
+                            {formatDate(internship.internshipStartDate)}{" "}
                             <span className="text-gray-500 px-1">to</span>{" "}
-                            {internship.endDate}
+                            {formatDate(internship.internshipEndDate)}
                           </span>
                         </p>
                       </div>
@@ -135,7 +141,11 @@ const ExtensionModal = ({ isOpen, onClose, internship, onSubmit }) => {
                         required
                         value={newEndDate}
                         onChange={(e) => setNewEndDate(e.target.value)}
-                        min={internship.endDate}
+                        min={
+                          internship
+                            ? formatDate(internship.internshipEndDate)
+                            : "Loading..."
+                        }
                         className="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:outline-none focus:ring-primary-600 focus:border-transparent transition-shadow hover:border-gray-300 bg-gray-50/50"
                       />
                     </div>

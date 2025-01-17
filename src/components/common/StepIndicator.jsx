@@ -53,14 +53,14 @@ const StepProgressIndicator = ({ currentStep, totalSteps = 5 }) => {
                 {/* Step circle */}
                 <div
                   className={`
-                    w-10 h-10 sm:w-16 sm:h-16 rounded-full flex items-center justify-center
+                    w-10 h-10 sm:w-16 sm:h-16 rounded-full border border-primary-600/50 flex items-center justify-center
                     transition-all duration-300 z-10
                     ${
                       isCompleted
-                        ? "bg-primary-600"
+                        ? "bg-primary-600 text-white"
                         : isActive
                         ? "bg-primary-600"
-                        : "bg-gray-200"
+                        : "bg-gray-200 text-primary-600/70"
                     }
                     ${isCompleted || isActive ? "text-white" : "text-gray-400"}
                   `}

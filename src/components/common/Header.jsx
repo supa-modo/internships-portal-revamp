@@ -13,20 +13,19 @@ import {
 import { faEnvelope } from "@fortawesome/free-solid-svg-icons";
 import logo from "../../assets/logo.png";
 import logoInverted from "../../assets/logoInverted.png";
+import { useAuth } from "../../context/AuthContext";
 
 const Header = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
+  const { user, logout } = useAuth();
 
   const handleLogout = async () => {
     try {
-      localStorage.removeItem("accessToken");
-      localStorage.removeItem("username");
-      sessionStorage.removeItem("accessToken");
-      sessionStorage.removeItem("username");
-      setUser(null);
+      await logout();
+      localStorage.removeItem("token");
       navigate("/login");
     } catch (error) {
       console.error("Logout failed", error);
@@ -121,21 +120,32 @@ const Header = () => {
           <div className="hidden md:flex items-baseline gap-2">
             {/* Admin Login Section */}
             <div ref={dropdownRef} className="relative my-auto">
-              <button
-                // onClick={() => setDropdownOpen(!dropdownOpen)}
-                onClick={() => navigate("/login")}
-                className="flex items-center font-semibold space-x-2 px-4 py-2 rounded-lg  text-green-700 transition-colors duration-200"
-              >
-                <RiAdminLine className="w-5 h-5" />
-                <span>Admin Login</span>
-                <IoIosArrowDown className="w-4 h-4" />
-              </button>
+              <div className="flex items-center">
+                <button
+                  onClick={() =>
+                    user ? navigate("/dashboard") : navigate("/login")
+                  }
+                  className="flex items-center font-semibold space-x-2 px-4 py-2 rounded-lg text-green-700 transition-colors duration-200"
+                >
+                  <RiAdminLine className="w-5 h-5" />
+                  <span>{user ? user.username : "Admin Login"}</span>
+                </button>
+                {user && (
+                  <button
+                    onClick={() => setDropdownOpen(!dropdownOpen)}
+                    className="p-2 hover:bg-gray-100 rounded-full"
+                  >
+                    <IoIosArrowDown className="w-4 h-4 text-green-700" />
+                  </button>
+                )}
+              </div>
 
-              {dropdownOpen && (
-                <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+              {/* Dropdown Menu */}
+              {dropdownOpen && user && (
+                <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-100 py-1">
                   <button
                     onClick={handleLogout}
-                    className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50"
+                    className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                   >
                     Logout
                   </button>

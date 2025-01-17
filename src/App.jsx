@@ -1,11 +1,10 @@
 // src/App.jsx
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import InternshipApplications from "./pages/Applications";
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/common/ProtectedRoute";
 import LoginPage from "./components/auth/Login";
 import HomePage from "./pages/Homepage";
-import ApplicationForm from "./pages/Applications";
+import Applications from "./pages/Applications";
 import DashboardLayout from "./pages/HRAdminDashboard";
 
 const App = () => {
@@ -13,32 +12,29 @@ const App = () => {
     <AuthProvider>
       <Router>
         <Routes>
-          {/* Public Routes */}
-
+          {/* Public routes */}
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<LoginPage />} />
-          <Route path="/applications" element={<ApplicationForm />} />
-          <Route path="/hr-admin" element={<DashboardLayout />} />
+          <Route path="/applications" element={<Applications />} />
 
-          {/* Protected Routes */}
+          {/* Protected routes */}
           <Route
-            path="/manage-applications"
+            path="/dashboard"
             element={
               <ProtectedRoute>
-                <InternshipApplications />
+                <DashboardLayout />
               </ProtectedRoute>
             }
           />
-
-          {/* 404 Route */}
-          <Route
-            path="*"
+          {/* <Route
+            path="/profile"
             element={
-              <div className="flex items-center justify-center min-h-screen">
-                <h1 className="text-2xl font-bold">404 - Page Not Found</h1>
-              </div>
+              <ProtectedRoute>
+                <ProfilePage />
+              </ProtectedRoute>
             }
-          />
+          /> */}
+          {/* Add other protected routes here */}
         </Routes>
       </Router>
     </AuthProvider>

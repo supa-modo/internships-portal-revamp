@@ -11,7 +11,7 @@ import { BiLogInCircle } from "react-icons/bi";
 
 const LoginPage = () => {
   const [credentials, setCredentials] = useState({
-    username: "",
+    email: "",
     password: "",
   });
   const [rememberMe, setRememberMe] = useState(false);
@@ -31,33 +31,19 @@ const LoginPage = () => {
     setError("");
 
     try {
-      // Replace this with your actual API call
-      const response = await fetch("your-api-endpoint/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          username: credentials.username,
-          password: credentials.password,
-        }),
+      const result = await login({
+        email: credentials.username,
+        password: credentials.password,
       });
 
-      // const data = await response.json();
-      // navigate(from, { replace: true });
-      navigate("/hr-admin");
-
-      // if (response.ok) {
-      //   // Call the login function from context with the token and user data
-      //   login(data.token, data.user);
-      //   // Redirect to the page they tried to visit or home
-      //   navigate(from, { replace: true });
-      // } else {
-      //   setError(data.message || "Login failed");
-      //   errRef.current.focus();
-      // }
+      if (result.success) {
+        const from = location.state?.from?.pathname || "/dashboard";
+        navigate(from, { replace: true });
+      } else {
+        setError("Invalid login credentials. Please try again.");
+      }
     } catch (err) {
-      setError("An error occurred during login!!");
+      setError("An error occurred during login. Please try again.");
       console.error("Login error:", err);
     } finally {
       setLoading(false);
