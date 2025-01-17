@@ -11,14 +11,14 @@ import {
 
 const Footer = () => {
   return (
-    <footer className="bg-gradient-to-r from-gray-600 to-primary-800 mt-32 text-white">
+    <footer className="bg-gradient-to-r from-gray-600 to-primary-800 text-white">
       {/* Main Footer Content */}
       <div className="max-w-7xl mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* About EAC Section */}
           <div className="space-y-4">
             <div className="flex items-center space-x-2 mb-4">
-              <img src="/logo.png" alt="EAC Logo" className="h-12 w-auto" />
+              <img src="/eac-logo.png" alt="EAC Logo" className="w-20 sm:w-14 h-auto" />
               <h3 className="text-lg sm:text-xl font-extrabold font-nunito-sans">
                 East African Community Secretariat
               </h3>

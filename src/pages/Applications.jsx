@@ -249,9 +249,9 @@ const ApplicationForm = () => {
   return (
     <div className="min-h-screen bg-gray-100">
       <Header />
-
-      {/* Progress Bar */}
-      <div className="fixed top-0 left-0 w-full h-1 bg-gray-200">
+      <div className="max-w-screen-2xl mx-auto border-x border-b border-primary-700 pb-20 mb-20 rounded-x-xl rounded-b-xl">
+{/* Progress Bar */}
+<div className="fixed top-0 left-0 w-full h-1 bg-gray-200">
         <motion.div
           className="h-full bg-primary-600"
           initial={{ width: 0 }}
@@ -272,7 +272,7 @@ const ApplicationForm = () => {
         <StepProgressIndicator currentStep={currentStep} totalSteps={5} />
 
         {/* Form Content */}
-        <div className="bg-white rounded-xl shadow-lg px-4 sm:px-6 py-6">
+        <div className="bg-white rounded-xl border border-gray-300 shadow-lg px-4 sm:px-6 py-6">
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Render different form sections based on currentStep */}
             {currentStep === 1 && (
@@ -350,6 +350,9 @@ const ApplicationForm = () => {
           </form>
         </div>
       </main>
+      </div>
+
+      
       <Footer />
 
       {/* Notification Modal */}

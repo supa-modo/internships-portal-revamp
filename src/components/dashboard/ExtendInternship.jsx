@@ -1,10 +1,13 @@
 import React, { useState } from "react";
 import DataTable from "../common/DataTable";
 import ExtensionModal from "../common/ExtendInternshipModal";
+import { TbArrowMoveRight } from "react-icons/tb";
+import { FaCheck } from "react-icons/fa";
 
 const ExtendInternship = () => {
   const [selectedInternship, setSelectedInternship] = useState(null);
   const [showExtensionModal, setShowExtensionModal] = useState(false);
+  const [isExtending, setIsExtending] = useState(false);
 
   const columns = [
     { header: "#", accessor: "id" },
@@ -28,12 +31,21 @@ const ExtendInternship = () => {
         <button
           onClick={(e) => {
             e.stopPropagation();
-            setSelectedInternship(row);
-            setShowExtensionModal(true);
+            handleExtend(row);
           }}
-          className="px-6 py-1 text-sm font-medium text-gray-100 bg-primary-700 rounded-lg hover:bg-primary-600 transition-colors"
+          className="px-4 py-1.5 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 transition-colors flex items-center gap-2"
         >
-          Extend
+          {isExtending && row.id === selectedInternship?.id ? (
+            <>
+              <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              <span>Extending...</span>
+            </>
+          ) : (
+            <>
+              <TbArrowMoveRight className="w-5 h-5" />
+              <span>Extend</span>
+            </>
+          )}
         </button>
       ),
     },

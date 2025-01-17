@@ -19,7 +19,7 @@ const StepProgressIndicator = ({ currentStep, totalSteps = 5 }) => {
   return (
     <div className="w-full max-w-4xl mx-auto px-4 mb-8">
       {/* Progress bar - visible on mobile */}
-      <div className="block sm:hidden w-full bg-gray-200 h-2 rounded-full mb-6">
+      <div className="block sm:hidden w-full bg-gray-200 h-1.5 rounded-full mb-6">
         <div
           className="h-full bg-primary-600 rounded-full transition-all duration-300"
           style={{ width: `${(currentStep / totalSteps) * 100}%` }}
@@ -53,7 +53,7 @@ const StepProgressIndicator = ({ currentStep, totalSteps = 5 }) => {
                 {/* Step circle */}
                 <div
                   className={`
-                    w-16 h-16 rounded-full flex items-center justify-center
+                    w-10 h-10 sm:w-16 sm:h-16 rounded-full flex items-center justify-center
                     transition-all duration-300 z-10
                     ${
                       isCompleted
@@ -65,7 +65,7 @@ const StepProgressIndicator = ({ currentStep, totalSteps = 5 }) => {
                     ${isCompleted || isActive ? "text-white" : "text-gray-400"}
                   `}
                 >
-                  <Icon className="w-7 h-7" />
+                  <Icon className="w-4 h-4 sm:w-7 sm:h-7" />
                 </div>
 
                 {/* Label */}
@@ -86,7 +86,7 @@ const StepProgressIndicator = ({ currentStep, totalSteps = 5 }) => {
 
                 {/* Mobile connecting line */}
                 {index < steps.length - 1 && (
-                  <div className="sm:hidden w-full flex-1 h-0.5 bg-gray-200 absolute top-7 left-1/2">
+                  <div className="sm:hidden w-full flex-1 h-0.5 bg-gray-200 absolute top-5 left-1/2">
                     <div
                       className="h-full bg-primary-600 transition-all duration-300"
                       style={{

@@ -30,18 +30,6 @@ const App = () => {
             }
           />
 
-          {/* Add more protected routes here */}
-          {/* Example:
-            <Route
-              path="/dashboard"
-              element={
-                <ProtectedRoute>
-                  <DashboardPage />
-                </ProtectedRoute>
-              }
-            /> 
-            */}
-
           {/* 404 Route */}
           <Route
             path="*"
