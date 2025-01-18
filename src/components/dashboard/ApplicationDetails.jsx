@@ -1,31 +1,17 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
-import { IoClose } from "react-icons/io5";
 import {
   FaUser,
-  FaGraduationCap,
+  FaFilePdf,
   FaBriefcase,
+  FaGraduationCap,
   FaShieldAlt,
 } from "react-icons/fa";
-import { HiHomeModern, HiMiniDevicePhoneMobile } from "react-icons/hi2";
+import { IoClose } from "react-icons/io5";
 import { LuMail } from "react-icons/lu";
-import { FaFilePdf } from "react-icons/fa6";
+import { HiMiniDevicePhoneMobile, HiHomeModern } from "react-icons/hi2";
 import NotificationModal from "../common/NotificationModal";
-
-// Sample JSON data for departments and supervisors
-const departments = [
-  { id: 1, name: "Human Resource" },
-  { id: 2, name: "Finance" },
-  { id: 3, name: "IT" },
-  { id: 4, name: "Procurement" },
-];
-
-const supervisors = [
-  { id: 1, name: "Principal Human Resource Officer" },
-  { id: 2, name: "Senior Procurement Officer" },
-  { id: 3, name: "IT Manager" },
-  { id: 4, name: "Finance Director" },
-];
+import { axiosInstance } from "../../services/api";
+import { formatDate } from "../../utils/dateFormatter";
 
 const ApplicationDetails = ({
   application,
@@ -41,43 +27,57 @@ const ApplicationDetails = ({
   const [notificationMessage, setNotificationMessage] = useState("");
   const [isSaving, setIsSaving] = useState(false);
   const [internshipData, setInternshipData] = useState({
-    internshipDepartment: application.internshipDepartment,
-    supervisor: application.supervisor,
-    internshipStartDate: application.internshipStartDate,
-    internshipEndDate: application.internshipEndDate,
+    internshipDepartment: "",
+    supervisor: "",
+    internshipStartDate: "",
+    internshipEndDate: "",
+    status: "pending",
   });
 
-  useEffect(() => {
-    const fetchApplicationDetails = async () => {
-      if (!application?.id) return;
+  // Define status-related constants
+  const statusColors = {
+    pending: "bg-yellow-100 text-yellow-800",
+    approved: "bg-green-100 text-green-800",
+    archived: "bg-red-100 text-red-800",
+    "under-review": "bg-blue-100 text-blue-800",
+  };
 
+  const statuses = ["pending", "approved", "archived", "under-review"];
+
+  // Add departments and supervisors state
+  const [departments, setDepartments] = useState([]);
+  const [supervisors, setSupervisors] = useState([]);
+
+  // Fetch departments and supervisors
+  useEffect(() => {
+    const fetchDepartmentsAndSupervisors = async () => {
       try {
-        const response = await axios.get(
-          `/api/internship-applications/${application.id}`
-        );
-        // Update the local state with fetched data
-        setInternshipData({
-          internshipDepartment: response.data.internshipDepartment,
-          supervisor: response.data.supervisor,
-          internshipStartDate: response.data.internshipStartDate,
-          internshipEndDate: response.data.internshipEndDate,
-        });
+        const [deptResponse, supResponse] = await Promise.all([
+          axiosInstance.get("/internship-applications/departments"),
+          axiosInstance.get("/internship-applications/supervisors"),
+        ]);
+        setDepartments(deptResponse.data);
+        setSupervisors(supResponse.data);
       } catch (error) {
-        console.error("Error fetching application details:", error);
+        console.error("Error fetching data:", error);
       }
     };
 
-    fetchApplicationDetails();
-  }, [application?.id]);
+    fetchDepartmentsAndSupervisors();
+  }, []);
 
-  if (!isOpen) return null;
-
-  const statuses = ["Pending", "Under Review", "Archived"];
-  const statusColors = {
-    Pending: "bg-yellow-100 text-yellow-800",
-    "Under Review": "bg-blue-100 text-blue-800",
-    Archived: "bg-gray-100 text-gray-800",
-  };
+  // Update internshipData when application changes
+  useEffect(() => {
+    if (application) {
+      setInternshipData({
+        internshipDepartment: application.internshipDepartment || "",
+        supervisor: application.supervisor || "",
+        internshipStartDate: application.internshipStartDate || "",
+        internshipEndDate: application.internshipEndDate || "",
+        status: application.status || "pending",
+      });
+    }
+  }, [application]);
 
   const handleSave = async () => {
     setNotificationType("confirm");
@@ -91,20 +91,23 @@ const ApplicationDetails = ({
     setIsNotificationOpen(false);
 
     try {
-      await axios.patch(
-        `/api/internship-applications/${application.id}`,
+      await axiosInstance.patch(
+        `/internship-applications/${application.id}`,
         internshipData
       );
 
+      onEdit && onEdit({ ...application, ...internshipData });
+
       setNotificationType("success");
       setNotificationTitle("Success");
-      setNotificationMessage("Your changes have been saved successfully.");
+      setNotificationMessage("Changes saved successfully.");
       setIsEditing(false);
     } catch (error) {
       setNotificationType("error");
       setNotificationTitle("Error");
-      setNotificationMessage("Failed to save changes. Please try again.");
-      console.error("Error updating application:", error);
+      setNotificationMessage(
+        error.response?.data?.message || "Failed to save changes."
+      );
     } finally {
       setIsSaving(false);
       setIsNotificationOpen(true);
@@ -113,7 +116,7 @@ const ApplicationDetails = ({
 
   const handleDelete = async () => {
     try {
-      await axios.delete(`/api/internship-applications/${application.id}`);
+      await axiosInstance.delete(`/internship-applications/delete/${application.id}`);
       onClose();
       // You might want to trigger a refresh of the applications list here
     } catch (error) {
@@ -126,9 +129,25 @@ const ApplicationDetails = ({
   };
 
   const handleNotificationClose = () => {
-    setIsNotificationOpen(false); // Close the notification modal
-    if (notificationType === "success" || notificationType === "error") {
-      setIsEditing(false); // Set isEditing to false when success/error modal is closed
+    setIsNotificationOpen(false);
+    if (notificationType === "success") {
+      onClose && onClose();
+    }
+  };
+
+  const handleStatusChange = async (newStatus) => {
+    try {
+      await axiosInstance.patch(`/internship-applications/${application.id}`, {
+        status: newStatus,
+      });
+      setInternshipData((prev) => ({ ...prev, status: newStatus }));
+      onEdit && onEdit({ ...application, status: newStatus });
+    } catch (error) {
+      console.error("Error updating status:", error);
+      setNotificationType("error");
+      setNotificationTitle("Error");
+      setNotificationMessage("Failed to update status");
+      setIsNotificationOpen(true);
     }
   };
 
@@ -137,10 +156,10 @@ const ApplicationDetails = ({
       title: "Education Details",
       icon: <FaGraduationCap className="w-6 h-6 text-blue-600" />,
       content: [
-        { label: "Institution", value: application.institution },
-        { label: "Course", value: application.course },
-        { label: "Current Year", value: application.currentYear },
-        { label: "Academic Award", value: application.academicAward },
+        { label: "Institution", value: application?.institutionName },
+        { label: "Course", value: application?.courseProgram },
+        { label: "Current Year", value: application?.currentYear },
+        { label: "Academic Award", value: application?.academicQualification },
       ],
       editable: false,
       bgColor: "bg-blue-50",
@@ -151,8 +170,8 @@ const ApplicationDetails = ({
       content: [
         {
           label: "Department",
-          value: internshipData.department,
-          key: "department",
+          value: internshipData.internshipDepartment,
+          key: "internshipDepartment",
           type: "select",
           options: departments,
         },
@@ -165,14 +184,14 @@ const ApplicationDetails = ({
         },
         {
           label: "Start Date",
-          value: internshipData.startDate,
-          key: "startDate",
+          value: formatDate(internshipData.internshipStartDate),
+          key: "internshipStartDate",
           type: "date",
         },
         {
           label: "End Date",
-          value: internshipData.endDate,
-          key: "endDate",
+          value: formatDate(internshipData.internshipEndDate),
+          key: "internshipEndDate",
           type: "date",
         },
       ],
@@ -184,11 +203,11 @@ const ApplicationDetails = ({
       icon: <FaShieldAlt className="w-6 h-6 text-red-600" />,
       content: [
         { label: "Insurance Company", value: application.insuranceCompany },
-        { label: "Policy Number", value: application.policyNo },
-        { label: "Expiry Date", value: application.expiryDate },
-        { label: "Emergency Contact", value: application.emergencyContact },
-        { label: "Emergency Phone", value: application.emergencyPhone },
-        { label: "Emergency Email", value: application.emergencyEmail },
+        { label: "Policy Number", value: application.insurancePolicyNumber },
+        { label: "Expiry Date", value: formatDate(application.policyExpirationDate) },
+        { label: "Emergency Contact", value: application.emergencyContactPerson },
+        { label: "Emergency Phone", value: application.emergencyContactPhone },
+        { label: "Emergency Email", value: application.emergencyContactEmail },
       ],
       editable: false,
       bgColor: "bg-red-50",
@@ -206,7 +225,9 @@ const ApplicationDetails = ({
               <div>
                 <h2 className="text-2xl font-bold text-white mb-2">
                   Internship Application Details -{" "}
-                  <span className="text-amber-400">{application.fullName}</span>
+                  <span className="text-amber-400">
+                    {application?.firstName} {application?.surname}
+                  </span>
                 </h2>
                 <div className="flex items-baseline gap-4">
                   <span
@@ -214,11 +235,16 @@ const ApplicationDetails = ({
                       statusColors[application.status]
                     }`}
                   >
-                    {application.status}
+                    {internshipData.status
+                      ? internshipData.status.charAt(0).toUpperCase() +
+                        internshipData.status.slice(1)
+                      : "Pending"}
                   </span>
                   <span className="text-sm  text-amber-200">
                     Submitted on:{" "}
-                    <span className="">{application.dateSubmitted}</span>
+                    <span className="font-semibold ml-2 text-amber-100">
+                      {formatDate(application.createdAt)}
+                    </span>
                   </span>
                 </div>
               </div>
@@ -258,7 +284,7 @@ const ApplicationDetails = ({
                     {
                       icon: <HiMiniDevicePhoneMobile size={22} />,
                       label: "Phone",
-                      value: application.phone,
+                      value: application.phoneNumber,
                     },
                     {
                       icon: <HiHomeModern size={20} />,
@@ -273,7 +299,7 @@ const ApplicationDetails = ({
                       <div className="text-gray-400">{item.icon}</div>
                       <div>
                         <p className="text-xs text-gray-500">{item.label}</p>
-                        <p className="font-medium text-gray-800">
+                        <p className="font-medium text-gray-600">
                           {item.value}
                         </p>
                       </div>
@@ -287,20 +313,39 @@ const ApplicationDetails = ({
                     Uploaded Documents
                   </h3>
                   <div className="space-y-1">
-                    {application.documents?.map((doc, index) => (
-                      <a
-                        key={index}
-                        href={doc.url}
-                        className="flex items-center gap-3 p-3 bg-primary-50 rounded-lg shadow-md hover:shadow-lg transition-shadow"
-                      >
-                        <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
-                          <FaFilePdf />
-                        </div>
-                        <span className="text-sm font-medium text-gray-700 truncate">
-                          {doc.name}
-                        </span>
-                      </a>
-                    ))}
+                    <a
+                      href={""}
+                      className="flex items-center gap-3 p-3 bg-primary-50 rounded-lg shadow-md hover:shadow-lg transition-shadow"
+                    >
+                      <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
+                        <FaFilePdf />
+                      </div>
+                      <span className="text-sm font-medium text-gray-700 truncate">
+                        ID - {application.identificationDocument}
+                      </span>
+                    </a>
+                    <a
+                      href={""}
+                      className="flex items-center gap-3 p-3 bg-primary-50 rounded-lg shadow-md hover:shadow-lg transition-shadow"
+                    >
+                      <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
+                        <FaFilePdf />
+                      </div>
+                      <span className="text-sm font-medium text-gray-700 truncate">
+                        Academic - {application.academicDocuments}
+                      </span>
+                    </a>
+                    <a
+                      href={""}
+                      className="flex items-center gap-3 p-3 bg-primary-50 rounded-lg shadow-md hover:shadow-lg transition-shadow"
+                    >
+                      <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
+                        <FaFilePdf />
+                      </div>
+                      <span className="text-sm font-medium text-gray-700 truncate">
+                        Insurance - {application.insuranceDocument}
+                      </span>
+                    </a>
                   </div>
                 </div>
               </div>
@@ -441,7 +486,7 @@ const ApplicationDetails = ({
       {/* Notification Modal */}
       <NotificationModal
         isOpen={isNotificationOpen}
-        onClose={handleNotificationClose} // Updated to handleNotificationClose
+        onClose={handleNotificationClose}
         onConfirm={handleConfirmSave}
         title={notificationTitle}
         message={notificationMessage}

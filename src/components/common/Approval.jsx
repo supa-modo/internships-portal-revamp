@@ -131,7 +131,7 @@ const ApprovalModal = ({ application, onClose }) => {
                 <button
                   onClick={handleSendEmail}
                   disabled={isSendingEmail}
-                  className="px-8 py-2.5 text-sm font-semibold text-white bg-green-700 rounded-md hover:bg-green-600 transition-colors flex items-center gap-2"
+                  className="py-2.5 mt-4 w-full text-center text-sm font-semibold text-white bg-green-700 rounded-md hover:bg-green-600 transition-colors flex items-center justify-center gap-2"
                 >
                   {isSendingEmail ? (
                     <>
@@ -139,7 +139,7 @@ const ApprovalModal = ({ application, onClose }) => {
                       <span>Sending...</span>
                     </>
                   ) : (
-                    "Finish Approval"
+                    <span className="font-nunito-sans">Finish Approval</span>
                   )}
                 </button>
               </div>

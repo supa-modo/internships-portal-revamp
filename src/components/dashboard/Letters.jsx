@@ -23,11 +23,21 @@ const SignedLetters = () => {
   const [notificationOpen, setNotificationOpen] = useState(false);
   const [notificationType, setNotificationType] = useState("success");
   const [notificationMessage, setNotificationMessage] = useState("");
+  const [mounted, setMounted] = useState(false);
   const searchTimeout = useRef(null);
 
   useEffect(() => {
     fetchLetters();
   }, []);
+
+  useEffect(() => {
+    if (showUploadModal) {
+      setMounted(true);
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+  }, [showUploadModal]);
 
   const fetchLetters = async () => {
     try {
@@ -49,12 +59,15 @@ const SignedLetters = () => {
 
     setIsSearching(true);
     try {
-      const response = await axiosInstance.get(`/internship-applications/search`, {
-        params: {
-          query: searchTerm,
-          status: "approved",
-        },
-      });
+      const response = await axiosInstance.get(
+        `/internship-applications/search`,
+        {
+          params: {
+            query: searchTerm,
+            status: "approved",
+          },
+        }
+      );
       setSuggestions(response.data);
     } catch (error) {
       console.error("Error searching applicants:", error);
@@ -66,12 +79,10 @@ const SignedLetters = () => {
   const handleApplicantSearch = (value) => {
     setUploadForm((prev) => ({ ...prev, applicantName: value }));
 
-    // Clear previous timeout
     if (searchTimeout.current) {
       clearTimeout(searchTimeout.current);
     }
 
-    // Set new timeout
     searchTimeout.current = setTimeout(() => {
       searchApplicants(value);
     }, 300);
@@ -101,7 +112,7 @@ const SignedLetters = () => {
         uploadForm.internshipApplicationId
       );
 
-      await axios.post("/api/signed-letters", formData, {
+      await axiosInstance.post("/signed-letters", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -109,8 +120,8 @@ const SignedLetters = () => {
 
       setNotificationType("success");
       setNotificationMessage("Signed document uploaded successfully.");
-      fetchLetters(); // Refresh the letters list
-      setShowUploadModal(false); // Close the modal on success
+      fetchLetters();
+      setShowUploadModal(false);
     } catch (error) {
       setNotificationType("error");
       setNotificationMessage(
@@ -123,8 +134,8 @@ const SignedLetters = () => {
   };
 
   const handleNotificationClose = () => {
-    setNotificationOpen(false); // Close the notification modal
-    setShowUploadModal(false); // Close the upload modal
+    setNotificationOpen(false);
+    setShowUploadModal(false);
   };
 
   const tableConfig = {
@@ -201,8 +212,6 @@ const SignedLetters = () => {
     data: letters,
   };
 
-  console.log(letters);
-
   return (
     <div className="p-6">
       <DataTable
@@ -220,13 +229,39 @@ const SignedLetters = () => {
 
       {/* Upload Modal */}
       {showUploadModal && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
-          <div className="bg-white rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-            {/* ... modal header ... */}
+        <div
+          className={`fixed inset-0 z-50 flex items-center justify-center transition-opacity duration-300 ${
+            mounted ? "opacity-100" : "opacity-0"
+          }`}
+        >
+          <div
+            className="fixed inset-0 bg-black/40 backdrop-blur-sm"
+            onClick={() => setShowUploadModal(false)}
+          />
+          <div className="relative w-full max-w-2xl transform transition-all duration-300 scale-100">
+            <div className="w-full bg-white rounded-2xl shadow-[0_0_50px_-12px_rgb(0,0,0,0.25)] overflow-hidden">
+              {/* Header */}
+              <div className="px-8 py-4 bg-gradient-to-r from-primary-100 to-primary-50 border-b border-gray-100">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h2 className="text-2xl font-bold bg-gradient-to-r from-primary-900 to-primary-700 bg-clip-text text-transparent">
+                      Upload Signed Document
+                    </h2>
+                    <p className="text-sm text-gray-500 mt-1">
+                      Upload a signed document for an approved intern
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => setShowUploadModal(false)}
+                    className="p-2 hover:bg-gray-100 rounded-full transition-all duration-200 hover:rotate-90"
+                  >
+                    <IoClose className="w-6 h-6 text-gray-500 hover:text-red-500" />
+                  </button>
+                </div>
+              </div>
 
-            <form onSubmit={handleUploadSubmit}>
-              <div className="p-8">
-                <div className="space-y-6">
+              <form onSubmit={handleUploadSubmit}>
+                <div className="px-8 py-4 space-y-6">
                   {/* Applicant Name with Suggestions */}
                   <div className="relative">
                     <label className="block text-sm font-bold text-gray-700 mb-2">
@@ -274,6 +309,7 @@ const SignedLetters = () => {
                     />
                   </div>
 
+                  {/* Letter Type */}
                   <div className="space-y-2">
                     <label className="block text-sm font-bold text-gray-700">
                       Letter Type
@@ -297,6 +333,7 @@ const SignedLetters = () => {
                     </select>
                   </div>
 
+                  {/* File Upload */}
                   <div className="space-y-2">
                     <label className="block text-sm font-bold text-gray-700">
                       Upload File
@@ -331,33 +368,33 @@ const SignedLetters = () => {
                     </div>
                   </div>
                 </div>
-              </div>
 
-              {/* Footer */}
-              <div className="px-8 py-6 bg-gray-50/80 border-t border-gray-100 flex justify-end gap-3">
-                <button
-                  type="button"
-                  onClick={() => setShowUploadModal(false)}
-                  className="px-8 py-2.5 text-sm font-semibold text-gray-700 bg-gray-200 border border-gray-300 rounded-lg hover:bg-gray-300 hover:border-gray-400 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-gray-200"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="px-9 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-primary-600 to-primary-700 rounded-lg hover:from-primary-700 hover:to-primary-800 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-700 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 shadow-lg"
-                >
-                  {isSubmitting ? (
-                    <>
-                      <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                      <span>Uploading...</span>
-                    </>
-                  ) : (
-                    "Upload Document"
-                  )}
-                </button>
-              </div>
-            </form>
+                {/* Footer */}
+                <div className="px-8 py-6 bg-gray-50/80 border-t border-gray-100 flex justify-end gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setShowUploadModal(false)}
+                    className="px-8 py-2.5 text-sm font-semibold text-gray-700 bg-gray-200 border border-gray-300 rounded-lg hover:bg-gray-300 hover:border-gray-400 transition-all duration-200 focus:ring-2 focus:ring-gray-200"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="px-9 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-primary-600 to-primary-700 rounded-lg hover:from-primary-700 hover:to-primary-800 transition-all duration-200 focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 shadow-lg"
+                  >
+                    {isSubmitting ? (
+                      <>
+                        <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                        <span>Uploading...</span>
+                      </>
+                    ) : (
+                      "Upload Document"
+                    )}
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
         </div>
       )}

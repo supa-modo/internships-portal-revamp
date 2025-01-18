@@ -1,7 +1,7 @@
 import { useState, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
-import { FaTimes, FaUser, FaLock } from "react-icons/fa";
+import { FaTimes, FaEye, FaEyeSlash } from "react-icons/fa";
 import LoadingButton from "../common/Button";
 import bg_image from "../../assets/eac-pic.jpg";
 import logo from "../../assets/logo.png";
@@ -14,6 +14,7 @@ const LoginPage = () => {
     email: "",
     password: "",
   });
+  const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -31,19 +32,14 @@ const LoginPage = () => {
     setError("");
 
     try {
-      const result = await login({
-        email: credentials.username,
-        password: credentials.password,
-      });
-
+      const result = await login(credentials);
       if (result.success) {
-        const from = location.state?.from?.pathname || "/dashboard";
-        navigate(from, { replace: true });
+        navigate(location.state?.from?.pathname || "/dashboard");
       } else {
-        setError("Invalid login credentials. Please try again.");
+        setError(result.error || "Invalid login credentials");
       }
     } catch (err) {
-      setError("An error occurred during login. Please try again.");
+      setError(err.message || "An error occurred during login");
       console.error("Login error:", err);
     } finally {
       setLoading(false);
@@ -100,34 +96,34 @@ const LoginPage = () => {
             </p>
           )}
 
-          {/* Username Input */}
+          {/* Email Input */}
           <div className="relative">
             <PiUserDuotone
               size={20}
               className="absolute left-6 top-1/2 transform -translate-y-1/2 text-gray-600"
             />
             <input
-              type="text"
-              placeholder="Enter your username"
-              id="username"
+              type="email"
+              placeholder="Enter your email address"
+              id="email"
               autoComplete="off"
-              value={credentials.username}
+              value={credentials.email}
               onChange={(e) =>
-                setCredentials({ ...credentials, username: e.target.value })
+                setCredentials({ ...credentials, email: e.target.value })
               }
               required
-              className="w-full py-3 pl-16 pr-4 border text-sm md:text-[14.5px] text-gray-600 font-semibold border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-700 focus:border-transparent"
+              className="w-full py-3 pl-16 pr-4 border text-sm sm:text-[15px] md:text-[16px] text-gray-600 font-semibold font-nunito-sans border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-700 focus:border-transparent"
             />
           </div>
 
-          {/* Password Input */}
+          {/* Password Input with Toggle */}
           <div className="relative">
             <GiPadlock
               size={20}
               className="absolute left-6 top-1/2 transform -translate-y-1/2 text-gray-500"
             />
             <input
-              type="password"
+              type={showPassword ? "text" : "password"}
               id="password"
               placeholder="Enter your password"
               value={credentials.password}
@@ -135,8 +131,15 @@ const LoginPage = () => {
                 setCredentials({ ...credentials, password: e.target.value })
               }
               required
-              className="w-full py-3 pl-16 pr-4 border text-sm md:text-[14.5px] font-semibold border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-700 focus:border-transparent"
+              className="w-full py-3 pl-16 pr-12 border text-sm sm:text-[15px] md:text-[16px] font-nunito-sans font-semibold border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-700 focus:border-transparent"
             />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+            >
+              {showPassword ? <FaEyeSlash size={20} /> : <FaEye size={20} />}
+            </button>
           </div>
 
           {/* Remember Me and Forgot Password */}

@@ -17,9 +17,6 @@ export const AuthProvider = ({ children }) => {
       if (token && userData) {
         setIsAuthenticated(true);
         setUser(JSON.parse(userData));
-      } else {
-        setIsAuthenticated(false);
-        setUser(null);
       }
       setIsLoading(false);
     };
@@ -29,13 +26,16 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (credentials) => {
     try {
-      const { token, user } = await loginUser(credentials);
+      const response = await loginUser(credentials);
+      const { token, user } = response;
+
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(user));
       setIsAuthenticated(true);
       setUser(user);
       return { success: true };
     } catch (error) {
+      console.error("Login error:", error);
       return { success: false, error: error.message };
     }
   };
