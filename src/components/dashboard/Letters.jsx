@@ -213,7 +213,7 @@ const SignedLetters = () => {
   };
 
   return (
-    <div className="p-6">
+    <div className="py-6">
       <DataTable
         {...tableConfig}
         headerButtons={

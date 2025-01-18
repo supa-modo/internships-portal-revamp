@@ -29,13 +29,14 @@ const DashboardLayout = () => {
         params: {
           status: ["extend", "letters"].includes(activeSection)
             ? "approved"
+            : "reports".includes(activeSection)
+            ? "all"
             : activeSection !== "all"
             ? activeSection
             : undefined,
         },
       });
       setApplications(response.data);
-      console.log(response.data);
     } catch (error) {
       console.error("Error fetching applications:", error);
     }
@@ -162,11 +163,6 @@ const DashboardLayout = () => {
   const handleApprove = async (application) => {
     setSelectedApplication(application);
     setIsApproving(true);
-
-    // Simulate an API call
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-
-    setIsApproving(false);
     setShowApprovalModal(true);
   };
 
@@ -176,15 +172,16 @@ const DashboardLayout = () => {
   );
 
   const handleRowClick = (application, event) => {
-    // Check if the click was on an action button or the last column
+    // If we're in under-review section and click is on approve button or its column, only handle approval
     if (
-      event.target.closest("button") || // Check if the click is on a button
-      event.target.closest("td:last-child") // Check if the click is on the last column
+      activeSection === "under-review" &&
+      (event.target.closest("button") || event.target.closest("td:last-child"))
     ) {
-      return; // Do nothing if the click is on a button or the last column
+      handleApprove(application);
+      return;
     }
 
-    // Otherwise, set the selected application
+    // For all other cases, show application details
     setSelectedApplication(application);
   };
 
@@ -266,6 +263,7 @@ const DashboardLayout = () => {
         <ApprovalModal
           application={selectedApplication}
           onClose={() => setShowApprovalModal(false)}
+          type="approval"
         />
       )}
     </div>

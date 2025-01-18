@@ -19,6 +19,7 @@ const ApplicationDetails = ({
   onClose,
   onEdit,
   onDelete,
+  onDataChange,
 }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
@@ -71,7 +72,7 @@ const ApplicationDetails = ({
     if (application) {
       setInternshipData({
         internshipDepartment: application.internshipDepartment || "",
-        supervisor: application.supervisor || "",
+        internshipSupervisor: application.internshipSupervisor || "",
         internshipStartDate: application.internshipStartDate || "",
         internshipEndDate: application.internshipEndDate || "",
         status: application.status || "pending",
@@ -80,10 +81,31 @@ const ApplicationDetails = ({
   }, [application]);
 
   const handleSave = async () => {
-    setNotificationType("confirm");
-    setNotificationTitle("Confirm Changes");
-    setNotificationMessage("Are you sure you want to save these changes?");
-    setIsNotificationOpen(true);
+    setIsSaving(true);
+    try {
+      const response = await axiosInstance.patch(
+        `/internship-applications/update-application/${application.id}`,
+        internshipData
+      );
+
+      // Trigger data refetch
+      onDataChange && onDataChange();
+
+      onEdit && onEdit(response.data);
+      setNotificationType("success");
+      setNotificationTitle("Success");
+      setNotificationMessage("Changes saved successfully");
+      setIsEditing(false);
+    } catch (error) {
+      setNotificationType("error");
+      setNotificationTitle("Error");
+      setNotificationMessage(
+        error.response?.data?.message || "Failed to save changes"
+      );
+    } finally {
+      setIsSaving(false);
+      setIsNotificationOpen(true);
+    }
   };
 
   const handleConfirmSave = async () => {
@@ -92,7 +114,7 @@ const ApplicationDetails = ({
 
     try {
       await axiosInstance.patch(
-        `/internship-applications/${application.id}`,
+        `/internship-applications/update-application/${application.id}`,
         internshipData
       );
 
@@ -116,7 +138,9 @@ const ApplicationDetails = ({
 
   const handleDelete = async () => {
     try {
-      await axiosInstance.delete(`/internship-applications/delete/${application.id}`);
+      await axiosInstance.delete(
+        `/internship-applications/delete/${application.id}`
+      );
       onClose();
       // You might want to trigger a refresh of the applications list here
     } catch (error) {
@@ -137,10 +161,17 @@ const ApplicationDetails = ({
 
   const handleStatusChange = async (newStatus) => {
     try {
-      await axiosInstance.patch(`/internship-applications/${application.id}`, {
-        status: newStatus,
-      });
+      await axiosInstance.patch(
+        `/internship-applications/update-application/${application.id}`,
+        {
+          status: newStatus,
+        }
+      );
       setInternshipData((prev) => ({ ...prev, status: newStatus }));
+
+      // Trigger data refetch
+      onDataChange && onDataChange();
+
       onEdit && onEdit({ ...application, status: newStatus });
     } catch (error) {
       console.error("Error updating status:", error);
@@ -177,7 +208,7 @@ const ApplicationDetails = ({
         },
         {
           label: "Supervisor",
-          value: internshipData.supervisor,
+          value: internshipData.internshipSupervisor,
           key: "supervisor",
           type: "select",
           options: supervisors,
@@ -204,8 +235,14 @@ const ApplicationDetails = ({
       content: [
         { label: "Insurance Company", value: application.insuranceCompany },
         { label: "Policy Number", value: application.insurancePolicyNumber },
-        { label: "Expiry Date", value: formatDate(application.policyExpirationDate) },
-        { label: "Emergency Contact", value: application.emergencyContactPerson },
+        {
+          label: "Expiry Date",
+          value: formatDate(application.policyExpirationDate),
+        },
+        {
+          label: "Emergency Contact",
+          value: application.emergencyContactPerson,
+        },
         { label: "Emergency Phone", value: application.emergencyContactPhone },
         { label: "Emergency Email", value: application.emergencyContactEmail },
       ],
@@ -427,12 +464,21 @@ const ApplicationDetails = ({
                 Application Status:
               </span>
               <select
-                value={application.status}
-                className="px-4 py-1 font-semibold text-[15px] text-gray-600 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-primary-600 focus:border-primary-600"
+                value={internshipData.status}
+                onChange={(e) =>
+                  setInternshipData((prev) => ({
+                    ...prev,
+                    status: e.target.value,
+                  }))
+                }
+                disabled={!isEditing}
+                className={`px-4 py-2 rounded-lg border ${
+                  isEditing ? "border-gray-300" : "border-gray-200 bg-gray-50"
+                }`}
               >
-                {statuses.map((s) => (
-                  <option key={s} value={s}>
-                    {s}
+                {statuses.map((status) => (
+                  <option key={status} value={status}>
+                    {status.charAt(0).toUpperCase() + status.slice(1)}
                   </option>
                 ))}
               </select>

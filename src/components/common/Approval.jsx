@@ -1,70 +1,110 @@
 // components/dashboard/ApprovalModal.js
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { IoClose } from "react-icons/io5";
-import NotificationModal from "./NotificationModal"; // Import the NotificationModal
+import NotificationModal from "./NotificationModal";
+import {
+  generateAcceptanceLetter,
+  generateExtensionLetter,
+} from "../../utils/generateLetters";
+import { axiosInstance } from "../../services/api";
+import { formatDate } from "../../utils/dateFormatter";
 
-const ApprovalModal = ({ application, onClose }) => {
-  const [isSendingEmail, setIsSendingEmail] = useState(false); // Track email sending state
+const ApprovalModal = ({ application, onClose, type = "approval" }) => {
+  const [isSendingEmail, setIsSendingEmail] = useState(false);
   const [notificationModal, setNotificationModal] = useState({
     isOpen: false,
-    type: "success", // 'success' or 'error'
+    type: "success",
     message: "",
   });
+  const [letterData, setLetterData] = useState(null);
 
-  // Simulate sending an email
+  useEffect(() => {
+    const generateLetter = async () => {
+      try {
+        const letterPdfString =
+          type === "approval"
+            ? generateAcceptanceLetter(application)
+            : generateExtensionLetter(
+                application, // applicantDetails
+                application.internshipEndDate, // currentEndDate
+                application.newEndDate, // newEndDate
+                application.requestDate // extensionReqDate
+              );
+        setLetterData(letterPdfString);
+      } catch (error) {
+        console.error("Error generating letter:", error);
+      }
+    };
+
+    if (application) {
+      generateLetter();
+    }
+  }, [application, type]);
+
   const handleSendEmail = async () => {
     setIsSendingEmail(true);
-
     try {
-      // Simulate an API call to send the email
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      const endpoint =
+        type === "approval"
+          ? `/internship-applications/${application.id}/approve`
+          : `/internship-applications/${application.id}/extend`;
 
-      // On success
+      const payload =
+        type === "approval"
+          ? { status: "approved" }
+          : {
+              newEndDate: application.newEndDate,
+              requestDate: application.requestDate,
+            };
+
+      await axiosInstance.patch(endpoint, payload);
+
+      // Trigger refetch through callback
+      if (application.onDataChange) {
+        application.onDataChange();
+      }
+
       setNotificationModal({
         isOpen: true,
         type: "success",
-        message:
-          "The document and approval message have been sent successfully!",
+        message: `The ${
+          type === "approval" ? "acceptance" : "extension"
+        } has been processed successfully!`,
       });
     } catch (error) {
-      // On error
       setNotificationModal({
         isOpen: true,
         type: "error",
-        message: "Failed to send the email. Please try again.",
+        message: "Failed to process the request. Please try again.",
       });
     } finally {
       setIsSendingEmail(false);
     }
   };
 
-  // Close the notification modal
   const handleNotificationClose = () => {
     setNotificationModal({ isOpen: false, type: "success", message: "" });
-    onClose(); // Close the ApprovalModal as well
+    onClose();
   };
 
   return (
     <>
-      <div className="fixed inset-0 z-50 flex items-center justify-center">
-        {/* Backdrop */}
-        <div
-          className="fixed inset-0 bg-black/40 backdrop-blur-sm"
-          onClick={onClose}
-        />
-
-        {/* Modal Content */}
-        <div className="relative w-full max-w-4xl h-[80vh] transform transition-all duration-300 scale-100">
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/30 backdrop-blur-sm">
+        <div className="relative w-full max-w-[58rem] h-[85vh] bg-white rounded-xl shadow-2xl">
           <div className="w-full h-full bg-white rounded-2xl shadow-[0_0_50px_-12px_rgb(0,0,0,0.25)] overflow-hidden flex flex-col">
             {/* Header */}
             <div className="px-8 py-4 bg-gradient-to-r from-primary-200 to-primary-100 border-b border-gray-100">
               <div className="flex items-center justify-between">
                 <div>
                   <h2 className="text-2xl font-bold bg-gradient-to-r from-primary-900 to-primary-700 bg-clip-text text-transparent">
-                    Application Approved
+                    {type === "approval"
+                      ? "Application Approved"
+                      : "Internship Extension"}
                   </h2>
                   <p className="text-sm text-gray-500 mt-1">
-                    Preview the approved application and email the applicant
+                    Preview the{" "}
+                    {type === "approval" ? "acceptance" : "extension"} letter
+                    and email the applicant
                   </p>
                 </div>
                 <button
@@ -78,40 +118,62 @@ const ApprovalModal = ({ application, onClose }) => {
 
             {/* Content */}
             <div className="flex-1 flex overflow-hidden">
-              {/* Document Preview (Gray Placeholder) */}
-              <div className="w-1/2 bg-gray-200 rounded-lg m-4 flex items-center justify-center">
-                <p className="text-gray-500">Document Preview</p>
+              {/* Document Preview */}
+              <div className="w-[56%] p-4 flex flex-col">
+                <div className="flex-1 border border-gray-200 rounded-lg overflow-hidden">
+                  {letterData && (
+                    <iframe
+                      src={letterData}
+                      className="w-full h-full"
+                      title="Letter Preview"
+                    />
+                  )}
+                </div>
               </div>
 
               {/* Application Details */}
-              <div className="w-1/2 p-6 overflow-y-auto">
-                <h2 className="text-2xl font-extrabold text-amber-700 mb-4">
-                  Internship Application Details
+              <div className="w-[42%] py-6 px-3 overflow-y-auto">
+                <h2 className="text-[1.45rem] font-extrabold text-amber-700 mb-4">
+                  {type === "approval"
+                    ? "Internship Approval Details"
+                    : "Internship Extension Details"}
                 </h2>
-                <h3 className="text-xl font-semibold text-gray-600">
-                  {application?.applicantName}
+                <h3 className="text-xl font-bold font-nunito-sans text-gray-600">
+                  {`${application?.firstName} ${application?.surname}`}
                 </h3>
                 <div className="mt-4 space-y-3">
                   <p className="text-sm text-gray-600">
                     <span className="font-semibold">Department:</span>{" "}
-                    {application?.department}
+                    {application?.internshipDepartment}
                   </p>
                   <p className="text-sm text-gray-600">
                     <span className="font-semibold">Supervisor:</span>{" "}
-                    Supervisor Placeholder Name
+                    {application?.internshipSupervisor}
                   </p>
+                  {type === "approval" && (
+                    <p className="text-sm text-gray-600">
+                      <span className="font-semibold">Current Start Date</span>{" "}
+                      {formatDate(application?.internshipStartDate)}
+                    </p>
+                  )}
                   <p className="text-sm text-gray-600">
-                    <span className="font-semibold">Start Date:</span>{" "}
-                    {application?.startDate}
+                    <span className="font-semibold">
+                      {type === "approval" ? "End Date" : "Current End Date"}:
+                    </span>{" "}
+                    {formatDate(application?.internshipEndDate)}
                   </p>
-                  <p className="text-sm text-gray-600">
-                    <span className="font-semibold">End Date:</span>{" "}
-                    {application?.endDate}
-                  </p>
+                  {type === "extension" && (
+                    <p className="text-sm text-gray-600">
+                      <span className="font-semibold">New End Date:</span>{" "}
+                      {formatDate(application?.newEndDate)}
+                    </p>
+                  )}
                   <p className="text-sm text-gray-600">
                     <span className="font-semibold">Status:</span>{" "}
                     <span className="text-green-700 font-semibold">
-                      Approved
+                      {type === "approval"
+                        ? "Approving"
+                        : "Processing Extension"}
                     </span>
                   </p>
                 </div>
@@ -119,13 +181,15 @@ const ApprovalModal = ({ application, onClose }) => {
                 {/* Email Notification Text */}
                 <div className="mt-6 py-4 bg-gray-50 rounded-lg">
                   <p className="text-sm text-gray-600">
-                    The previewed document will be sent to the applicant's
-                    provided email address with a message informing them of the
-                    application approval and further instructions.
+                    The previewed document will be sent to the applicant's email
+                    address with a message informing them of the{" "}
+                    {type === "approval"
+                      ? "application approval"
+                      : "internship extension"}
+                    and further instructions.
                   </p>
                   <p className="text-sm text-gray-600 mt-3">
-                    Click the button below to confirm and finish the approval
-                    process.
+                    Click the button below to confirm and finish the process.
                   </p>
                 </div>
                 <button
@@ -139,7 +203,11 @@ const ApprovalModal = ({ application, onClose }) => {
                       <span>Sending...</span>
                     </>
                   ) : (
-                    <span className="font-nunito-sans">Finish Approval</span>
+                    <span className="font-nunito-sans">
+                      {type === "approval"
+                        ? "Finish Approval Processing"
+                        : "Finish Extension Processing"}
+                    </span>
                   )}
                 </button>
               </div>

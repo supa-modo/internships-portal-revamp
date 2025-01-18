@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { IoArchive, IoDocumentText } from "react-icons/io5";
 import { TbReportAnalytics } from "react-icons/tb";
 import { FaRegClock } from "react-icons/fa";
@@ -12,21 +12,42 @@ import {
 } from "react-icons/fa6";
 import { BsArchive, BsUiChecks } from "react-icons/bs";
 import { BiSolidReport } from "react-icons/bi";
+import { axiosInstance } from "../../services/authService";
 
 const SideNavbar = ({ activeItem = "all", onMenuClick }) => {
+  const [counts, setCounts] = useState({
+    pending: 0,
+    "under-review": 0,
+  });
+
+  useEffect(() => {
+    const fetchCounts = async () => {
+      try {
+        const response = await axiosInstance.get(
+          "/internship-applications/applications/counts"
+        );
+        setCounts(response.data);
+      } catch (error) {
+        console.error("Error fetching counts:", error);
+      }
+    };
+
+    fetchCounts();
+  }, []);
+
   const menuItems = [
     { id: "all", label: "All Applications", icon: IoDocumentText, count: null },
     {
       id: "under-review",
       label: "Under Review",
       icon: FaRegClock,
-      count: 3,
+      count: counts["under-review"] || 0,
     },
     {
       id: "pending",
       label: "Pending Applications",
       icon: FaFileCircleExclamation,
-      count: 7,
+      count: counts.pending || 0,
     },
     {
       id: "approved",
@@ -94,7 +115,7 @@ const SideNavbar = ({ activeItem = "all", onMenuClick }) => {
             <span className="text-[15px] font-semibold">{item.label}</span>
           </div>
           {item.count && (
-            <span className="px-2.5 py-0.5 bg-yellow-400 text-xs font-semibold rounded-full">
+            <span className="px-2 py-1 text-xs font-semibold bg-amber-100 text-amber-800 rounded-lg">
               {item.count}
             </span>
           )}

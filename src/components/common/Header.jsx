@@ -32,6 +32,8 @@ const Header = () => {
     }
   };
 
+  
+
   const socialLinks = [
     {
       icon: faFacebookF,
@@ -65,8 +67,10 @@ const Header = () => {
     },
   ];
 
+
   return (
     <div className="sticky top-0 z-50 bg-white shadow-md">
+      
       <header className="border-b border-gray-200">
         <nav className="mx-auto flex items-center justify-between gap-x-8 py-1 px-6 md:px-14 lg:py-1">
           {/* Logo and Contact Info Section */}
@@ -128,7 +132,7 @@ const Header = () => {
                   className="flex items-center font-semibold space-x-2 px-4 py-2 rounded-lg text-green-700 transition-colors duration-200"
                 >
                   <RiAdminLine className="w-5 h-5" />
-                  <span>{user ? user.username : "Admin Login"}</span>
+                  <span>{user ? user.firstName + " " + user.lastName : "Admin Login"}</span>
                 </button>
                 {user && (
                   <button

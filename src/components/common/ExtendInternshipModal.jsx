@@ -6,8 +6,16 @@ import { FaBuildingColumns } from "react-icons/fa6";
 import NotificationModal from "../common/NotificationModal";
 import { axiosInstance } from "../../services/authService";
 import { formatDate } from "../../utils/dateFormatter";
+import { generateExtensionLetter } from "../../utils/generateLetters";
+import ApprovalModal from "./Approval";
 
-const ExtensionModal = ({ isOpen, onClose, internship, onSubmit }) => {
+const ExtensionModal = ({
+  isOpen,
+  onClose,
+  internship,
+  onSubmit,
+  onDataChange,
+}) => {
   const [newEndDate, setNewEndDate] = useState("");
   const [requestDate, setRequestDate] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -15,6 +23,8 @@ const ExtensionModal = ({ isOpen, onClose, internship, onSubmit }) => {
   const [notificationOpen, setNotificationOpen] = useState(false);
   const [notificationType, setNotificationType] = useState("success");
   const [notificationMessage, setNotificationMessage] = useState("");
+  const [generatedLetter, setGeneratedLetter] = useState(null);
+  const [showApprovalModal, setShowApprovalModal] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
@@ -31,28 +41,20 @@ const ExtensionModal = ({ isOpen, onClose, internship, onSubmit }) => {
     setIsSubmitting(true);
 
     try {
-      await axiosInstance.patch(
-        `/internship-applications/${internship.id}/extend`,
-        {
-          newEndDate,
-          requestDate,
-        }
+      const letterPdfString = generateExtensionLetter(
+        internship, // applicantDetails
+        internship.internshipEndDate, // currentEndDate
+        newEndDate, // newEndDate
+        requestDate // extensionReqDate
       );
-
-      setNotificationType("success");
-      setNotificationMessage(
-        "Internship extension request processed successfully."
-      );
-      onSubmit?.({ newEndDate, requestDate });
+      setGeneratedLetter(letterPdfString);
+      setShowApprovalModal(true);
     } catch (error) {
       setNotificationType("error");
-      setNotificationMessage(
-        "Failed to process internship extension request. Please try again."
-      );
-      console.error("Error extending internship:", error);
+      setNotificationMessage("Failed to generate extension letter");
+      setNotificationOpen(true);
     } finally {
       setIsSubmitting(false);
-      setNotificationOpen(true);
     }
   };
 
@@ -198,13 +200,26 @@ const ExtensionModal = ({ isOpen, onClose, internship, onSubmit }) => {
         </div>
       </div>
 
+      {showApprovalModal && (
+        <ApprovalModal
+          application={{
+            ...internship,
+            newEndDate,
+            requestDate,
+            onDataChange,
+          }}
+          onClose={() => setShowApprovalModal(false)}
+          type="extension"
+        />
+      )}
+
       {/* Notification Modal */}
       <NotificationModal
         isOpen={notificationOpen}
         onClose={handleNotificationClose}
+        type={notificationType}
         title={notificationType === "success" ? "Success" : "Error"}
         message={notificationMessage}
-        type={notificationType}
       />
     </>
   );

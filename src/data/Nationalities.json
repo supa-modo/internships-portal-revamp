@@ -1,0 +1,15 @@
+{
+  "nationalities": [
+    { "country": "Republic of Burundi", "nationality": "Burundian" },
+    {
+      "country": "Democratic Republic of the Congo",
+      "nationality": "Congolese"
+    },
+    { "country": "Republic of Kenya", "nationality": "Kenyan" },
+    { "country": "Republic of Rwanda", "nationality": "Rwandan" },
+    { "country": "Federal Republic of Somalia", "nationality": "Somali" },
+    { "country": "Republic of South Sudan", "nationality": "S. Sudanese" },
+    { "country": "Republic of Uganda", "nationality": "Ugandan" },
+    { "country": "United Republic of Tanzania", "nationality": "Tanzanian" }
+  ]
+}

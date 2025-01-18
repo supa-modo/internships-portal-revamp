@@ -16,6 +16,7 @@ const DataTable = ({
   onRowClick,
   defaultItemsPerPage = 10,
   headerButtons, // New prop for custom buttons
+  onDataChange, // Add this prop
 }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeFilters, setActiveFilters] = useState({});
@@ -23,6 +24,7 @@ const DataTable = ({
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(defaultItemsPerPage);
   const [selectedApplication, setSelectedApplication] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const handleSort = (key, index) => {
     // Skip sorting for first and last columns
@@ -112,15 +114,56 @@ const DataTable = ({
       return; // Do nothing if the click is on a button or the last column
     }
 
-    // Otherwise, call the onRowClick handler with the entire row data
-    onRowClick && onRowClick(item, event);
+    // Pass the refetch callback to the detail view
+    onRowClick &&
+      onRowClick(
+        {
+          ...item,
+          onDataChange, // Pass the callback
+        },
+        event
+      );
   };
+
+  // Filter data based on search term and existing filters
+  const filteredData = useMemo(() => {
+    return data.filter((item) => {
+      // First apply existing filters
+      const matchesFilter = activeFilters
+        ? item.status === activeFilters
+        : true;
+
+      // Then apply search term across all searchable columns
+      const matchesSearch =
+        searchTerm.toLowerCase().trim() === ""
+          ? true
+          : columns.some((column) => {
+              const value = item[column.accessor];
+              if (!value) return false;
+
+              // Handle special cases like name which might be composed of multiple fields
+              if (column.accessor === "name") {
+                return `${item.firstName} ${item.surname}`
+                  .toLowerCase()
+                  .includes(searchTerm.toLowerCase());
+              }
+
+              return String(value)
+                .toLowerCase()
+                .includes(searchTerm.toLowerCase());
+            });
+
+      return matchesFilter && matchesSearch;
+    });
+  }, [data, activeFilters, searchTerm, columns]);
 
   return (
     <div className="rounded-2xl px-6 pt-3 pb-10 space-y-3">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h2 className="text-xl font-extrabold text-primary-700">{title}</h2>
+        <h2 className="text-xl font-extrabold font-nunito-sans text-primary-700">
+          {title}
+        </h2>
 
         <div className="flex items-center gap-6">
           {/* Custom Buttons */}
