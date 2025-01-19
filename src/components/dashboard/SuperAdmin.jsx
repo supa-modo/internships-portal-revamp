@@ -131,7 +131,7 @@ const SuperAdmin = () => {
 
       {/* Search and Filter Bar */}
       <div className="flex gap-4 items-center bg-white p-4 rounded-lg shadow">
-        <div className="flex-1 relative">
+        <div className="flex w-2/3 relative">
           <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
           <input
             type="text"
@@ -141,10 +141,11 @@ const SuperAdmin = () => {
             className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
           />
         </div>
-        <select
-          value={roleFilter}
-          onChange={(e) => setRoleFilter(e.target.value)}
-          className="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+        <div className="w-1/3 flex items-center gap-4 font-nunito-sans font-semibold">
+          <select
+            value={roleFilter}
+            onChange={(e) => setRoleFilter(e.target.value)}
+          className="px-5 py-2 w-full border rounded-lg focus:ring-1 focus:outline-none focus:ring-primary-700 focus:border-primary-700"
         >
           <option value="all">All Roles</option>
           <option value="admin">Admin</option>
@@ -154,11 +155,13 @@ const SuperAdmin = () => {
         <motion.button
           whileTap={{ scale: 0.95 }}
           onClick={() => setIsAddUserModalOpen(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+          className="w-full flex justify-center items-center gap-2 px-5 py-2 border border-primary-700 bg-primary-700 text-white rounded-lg hover:bg-primary-600 transition-colors"
         >
           <FaUserPlus className="w-4 h-4" />
-          <span>Add User</span>
+          <span>Add New User</span>
         </motion.button>
+        </div>
+        
       </div>
 
       {/* Users Table */}
@@ -167,7 +170,7 @@ const SuperAdmin = () => {
           <thead className="bg-gray-200 font-nunito-sans">
             <tr>
               <th className="px-4 py-5 text-left text-[13px] font-bold text-gray-500 uppercase tracking-wider">
-                <FaUser className="w-4 h-4" />
+                <FaUser className="w-5 h-5" />
               </th>
               <th className="px-6 py-5 text-left text-[13px] font-bold text-gray-500 uppercase tracking-wider">
                 User
@@ -195,7 +198,7 @@ const SuperAdmin = () => {
                 <td className="px-4 py-4 whitespace-nowrap">
                   <span>{index + 1} .</span>
                 </td>
-                <td className="pr-6 py-4 whitespace-nowrap">
+                <td className="px-6 py-4 whitespace-nowrap">
                   <div className="flex items-center">
                     <div className="flex-shrink-0 h-10 w-10">
                       <div className="h-10 w-10 rounded-full bg-primary-100 flex items-center justify-center">
@@ -213,7 +216,7 @@ const SuperAdmin = () => {
                     </div>
                   </div>
                 </td>
-                <td className="pr-6 py-4 whitespace-nowrap">
+                <td className="px-6 py-4 whitespace-nowrap">
                   <span
                     className={`px-5 pb-1.5 pt-1 inline-flex text-[13px] leading-5 font-semibold rounded-lg ${
                       user.role === "admin"
@@ -226,7 +229,7 @@ const SuperAdmin = () => {
                     {user.role}
                   </span>
                 </td>
-                <td className="pr-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {user.department}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-[13px] font-medium">
