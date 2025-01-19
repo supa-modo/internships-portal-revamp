@@ -1,17 +1,10 @@
 import { FaBriefcase, FaClock } from "react-icons/fa6";
 import FormInput from "./FormInput";
+import { useEffect, useState } from "react";
+import axiosInstance from "../../services/api";
 
 const InternshipDetailsSection = ({ formData, handleChange, errors }) => {
-  const departments = [
-    "Information Technology",
-    "Human Resources",
-    "Finance",
-    "Legal Affairs",
-    "Communications",
-    "Research and Development",
-    "Administration",
-    "Project Management",
-  ];
+  const [departments, setDepartments] = useState([]);
 
   const calculateMinEndDate = () => {
     if (!formData.internshipStartDate) return "";
@@ -28,6 +21,22 @@ const InternshipDetailsSection = ({ formData, handleChange, errors }) => {
     maxEndDate.setMonth(startDate.getMonth() + 6); // Maximum 6 months internship
     return maxEndDate.toISOString().split("T")[0];
   };
+
+  // Fetch departments
+  useEffect(() => {
+    const fetchDepartmentsAndSupervisors = async () => {
+      try {
+        const response = await axiosInstance.get(
+          "/internship-applications/departments"
+        );
+        setDepartments(response.data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchDepartmentsAndSupervisors();
+  }, []);
 
   return (
     <div className="">
@@ -74,10 +83,10 @@ const InternshipDetailsSection = ({ formData, handleChange, errors }) => {
             `}
             required
           >
-            <option value="">Select Department</option>
+            <option value="">Preferred Department Placement</option>
             {departments.map((dept) => (
-              <option key={dept} value={dept}>
-                {dept}
+              <option key={dept.id} value={dept.name}>
+                {dept.name}
               </option>
             ))}
           </select>

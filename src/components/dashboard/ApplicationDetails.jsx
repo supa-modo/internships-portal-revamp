@@ -22,6 +22,7 @@ const ApplicationDetails = ({
   onDataChange,
 }) => {
   const [isEditing, setIsEditing] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const [notificationType, setNotificationType] = useState("confirm");
   const [notificationTitle, setNotificationTitle] = useState("");
@@ -29,11 +30,21 @@ const ApplicationDetails = ({
   const [isSaving, setIsSaving] = useState(false);
   const [internshipData, setInternshipData] = useState({
     internshipDepartment: "",
-    supervisor: "",
+    internshipSupervisor: "",
     internshipStartDate: "",
     internshipEndDate: "",
     status: "pending",
   });
+
+  useEffect(() => {
+    if (isOpen) {
+      setMounted(true);
+      document.body.style.overflow = "hidden";
+    }
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [isOpen]);
 
   // Define status-related constants
   const statusColors = {
@@ -141,8 +152,14 @@ const ApplicationDetails = ({
       await axiosInstance.delete(
         `/internship-applications/delete/${application.id}`
       );
-      onClose();
-      // You might want to trigger a refresh of the applications list here
+      setNotificationType("success");
+      setNotificationTitle("Success");
+      setNotificationMessage("Application has been deleted successfully");
+      setIsNotificationOpen(true);
+
+      setTimeout(() => {
+        onClose();
+      }, 2000);
     } catch (error) {
       console.error("Error deleting application:", error);
       setNotificationType("error");
@@ -218,25 +235,29 @@ const ApplicationDetails = ({
           key: "internshipDepartment",
           type: "select",
           options: departments,
+          rawValue: internshipData.internshipDepartment,
         },
         {
           label: "Supervisor",
           value: internshipData.internshipSupervisor,
-          key: "supervisor",
+          key: "internshipSupervisor",
           type: "select",
           options: supervisors,
+          rawValue: internshipData.internshipSupervisor,
         },
         {
           label: "Start Date",
           value: formatDate(internshipData.internshipStartDate),
           key: "internshipStartDate",
           type: "date",
+          rawValue: internshipData.internshipStartDate,
         },
         {
           label: "End Date",
           value: formatDate(internshipData.internshipEndDate),
           key: "internshipEndDate",
           type: "date",
+          rawValue: internshipData.internshipEndDate,
         },
       ],
       editable: true,
@@ -267,7 +288,16 @@ const ApplicationDetails = ({
 
   return (
     <>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/30 backdrop-blur-sm">
+      <div
+        className={`fixed inset-0 z-50 flex items-center justify-center transition-opacity duration-300 ${
+          mounted ? "opacity-100" : "opacity-0"
+        }`}
+      >
+        <div
+          className="fixed inset-0 p-4 bg-black/40 backdrop-blur-sm"
+          onClick={onClose}
+        />
+
         <div className="relative max-h-screen overflow-y-auto w-full max-w-7xl bg-white overflow-hidden rounded-xl shadow-2xl">
           {/* Header */}
           <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200 bg-gradient-to-r from-primary-700 to-primary-600">
@@ -442,6 +472,21 @@ const ApplicationDetails = ({
                                     </option>
                                   ))}
                                 </select>
+                              ) : item.type === "date" ? (
+                                <input
+                                  type="date"
+                                  value={
+                                    internshipData[item.key]?.split("T")[0] ||
+                                    ""
+                                  }
+                                  onChange={(e) =>
+                                    setInternshipData({
+                                      ...internshipData,
+                                      [item.key]: e.target.value,
+                                    })
+                                  }
+                                  className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-primary-600 focus:border-primary-600"
+                                />
                               ) : (
                                 <input
                                   type={item.type || "text"}

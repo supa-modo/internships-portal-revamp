@@ -181,7 +181,7 @@ const Reports = () => {
           </div>
           <div className="flex gap-4 w-full md:w-auto">
             <motion.button
-              whileTap={{ scale: 0.95 }}
+              whileTap={{ scale: 0.85 }}
               onClick={() => setShowFilters(!showFilters)}
               className={`flex items-center gap-2 px-6 py-2 rounded-lg font-medium transition-all ${
                 showFilters
@@ -195,7 +195,7 @@ const Reports = () => {
 
             {/* Add Reset Filters Button */}
             <motion.button
-              whileTap={{ scale: 0.95 }}
+              whileTap={{ scale: 0.85 }}
               onClick={() => {
                 setFilters({
                   startDate: "",
@@ -213,7 +213,8 @@ const Reports = () => {
               <IoRefresh size={20} />
               <span>Reset Filters</span>
             </motion.button>
-            <button
+            <motion.button
+              whileTap={{ scale: 0.85 }}
               onClick={handleGenerateReport}
               className="bg-primary-700  text-white px-8 py-2 rounded-lg font-medium hover:bg-primary-600 transition-all flex items-center gap-2"
             >
@@ -222,7 +223,7 @@ const Reports = () => {
                 className={`${loading ? "animate-spin" : ""}`}
               />
               <span>Generate Report</span>
-            </button>
+            </motion.button>
           </div>
         </div>
 
@@ -235,9 +236,9 @@ const Reports = () => {
               exit={{ height: 0, opacity: 0 }}
               className="overflow-hidden"
             >
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-5 p-1 ">
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-700">
+                  <label className="text-sm font-nunito-sans font-bold text-gray-500">
                     Start Date
                   </label>
                   <input
@@ -245,11 +246,11 @@ const Reports = () => {
                     name="startDate"
                     value={filters.startDate}
                     onChange={handleFilterChange}
-                    className="w-full rounded-lg border border-gray-200 p-2.5 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+                    className="w-full font-bold font-nunito-sans text-[15px] text-gray-700 rounded-lg border border-gray-200 p-2.5 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-600"
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-700">
+                  <label className="text-sm font-nunito-sans font-bold text-gray-500">
                     End Date
                   </label>
                   <input
@@ -257,18 +258,18 @@ const Reports = () => {
                     name="endDate"
                     value={filters.endDate}
                     onChange={handleFilterChange}
-                    className="w-full rounded-lg border border-gray-200 p-2.5 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+                    className="w-full font-bold font-nunito-sans text-[15px] text-gray-700 rounded-lg border border-gray-200 p-2.5 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-600"
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-700">
+                  <label className="text-sm font-nunito-sans font-bold text-gray-500">
                     Status
                   </label>
                   <select
                     name="status"
                     value={filters.status}
                     onChange={handleFilterChange}
-                    className="w-full rounded-lg border border-gray-200 p-2.5 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+                    className="w-full font-bold font-nunito-sans text-[15px] text-gray-700 rounded-lg border border-gray-200 p-2.5 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-600"
                   >
                     <option value="">All Statuses</option>
                     <option value="pending">Pending</option>
@@ -278,14 +279,14 @@ const Reports = () => {
                   </select>
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-700">
+                  <label className="text-sm font-nunito-sans font-bold text-gray-500">
                     Internship Status
                   </label>
                   <select
                     name="internshipStatus"
                     value={filters.internshipStatus}
                     onChange={handleFilterChange}
-                    className="w-full rounded-lg border border-gray-200 p-2.5 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+                    className="w-full font-bold font-nunito-sans text-[15px] text-gray-700 rounded-lg border border-gray-200 p-2.5 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-600"
                   >
                     <option value="">All</option>
                     <option value="active">Active</option>
@@ -293,14 +294,14 @@ const Reports = () => {
                   </select>
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-700">
+                  <label className="text-sm font-nunito-sans font-bold text-gray-500">
                     Department
                   </label>
                   <select
                     name="department"
                     value={filters.department}
                     onChange={handleFilterChange}
-                    className="w-full rounded-lg border border-gray-200 p-2.5 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+                    className="w-full font-bold font-nunito-sans text-[15px] text-gray-700 rounded-lg border border-gray-200 p-2.5 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-600"
                   >
                     <option value="">All Departments</option>
                     {depts_unitsData.units.map((dept) => (
@@ -311,14 +312,14 @@ const Reports = () => {
                   </select>
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-700">
+                  <label className="text-sm font-nunito-sans font-bold text-gray-500">
                     Supervisor
                   </label>
                   <select
                     name="supervisor"
                     value={filters.supervisor}
                     onChange={handleFilterChange}
-                    className="w-full rounded-lg border border-gray-200 p-2.5 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+                    className="w-full font-bold font-nunito-sans text-[15px] text-gray-700 rounded-lg border border-gray-200 p-2.5 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-600"
                   >
                     <option value="">All Supervisors</option>
                     {supervisorsData.supervisors.map((supervisor) => (
@@ -329,14 +330,14 @@ const Reports = () => {
                   </select>
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-700">
+                  <label className="text-sm font-nunito-sans font-bold text-gray-500">
                     Nationality
                   </label>
                   <select
                     name="nationality"
                     value={filters.nationality}
                     onChange={handleFilterChange}
-                    className="w-full rounded-lg border border-gray-200 p-2.5 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+                    className="w-full font-bold font-nunito-sans text-[15px] text-gray-700 rounded-lg border border-gray-200 p-2.5 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-600"
                   >
                     <option value="">All Nationalities</option>
                     {nationalitiesData.nationalities.map((nat) => (
@@ -352,10 +353,9 @@ const Reports = () => {
         </AnimatePresence>
       </div>
 
-      {/* Results Table */}
-      <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+
         {/* Results Table */}
-        <div className="rounded-2xl px-6 pb-14">
+        <div className="rounded-2xl px-1 pb-4">
           {/* Table */}
           <div className="overflow-hidden border-gray-300 rounded-2xl">
             <table className="w-full">
@@ -538,7 +538,7 @@ const Reports = () => {
               </button>
             </div>
           </div>
-        </div>
+
 
         {/* Action Buttons */}
         {reports.length > 0 && (

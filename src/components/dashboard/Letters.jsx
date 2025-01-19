@@ -6,6 +6,7 @@ import { FaDownload, FaTrash } from "react-icons/fa";
 import NotificationModal from "../common/NotificationModal";
 import { formatDate } from "../../utils/dateFormatter";
 import axiosInstance from "../../services/api";
+import { motion } from "framer-motion";
 
 const SignedLetters = () => {
   const [showUploadModal, setShowUploadModal] = useState(false);
@@ -41,11 +42,9 @@ const SignedLetters = () => {
 
   const fetchLetters = async () => {
     try {
-      // Check if token exists
       const token = localStorage.getItem("token");
       if (!token) {
         console.error("No authentication token found");
-        // Redirect to login or show auth error
         return;
       }
 
@@ -54,12 +53,9 @@ const SignedLetters = () => {
     } catch (error) {
       console.error("Error fetching letters:", error);
       if (error.response?.status === 401) {
-        // Handle unauthorized access
         setNotificationType("error");
         setNotificationMessage("Please log in again to continue.");
         setNotificationOpen(true);
-        // Optionally redirect to login
-        // window.location.href = '/login';
       }
     }
   };
@@ -89,7 +85,7 @@ const SignedLetters = () => {
   const handleDelete = async (id) => {
     try {
       await axiosInstance.delete(`/signed-letters/${id}`);
-      fetchLetters(); // Refresh the list
+      fetchLetters();
       setNotificationType("success");
       setNotificationMessage("Letter deleted successfully");
       setNotificationOpen(true);
@@ -154,7 +150,7 @@ const SignedLetters = () => {
       department: application.internshipDepartment,
       internshipApplicationId: application.id,
     }));
-    setSuggestions([]); // Clear suggestions immediately
+    setSuggestions([]);
   };
 
   const handleUploadSubmit = async (e) => {
@@ -171,7 +167,7 @@ const SignedLetters = () => {
         uploadForm.internshipApplicationId
       );
 
-      const response = await axiosInstance.post("/signed-letters", formData, {
+      await axiosInstance.post("/signed-letters", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -181,7 +177,6 @@ const SignedLetters = () => {
       setNotificationMessage("Signed document uploaded successfully.");
       fetchLetters();
       setShowUploadModal(false);
-      // Reset form fields
       setUploadForm({
         applicantName: "",
         department: "",
@@ -211,7 +206,7 @@ const SignedLetters = () => {
     try {
       await fetchLetters();
       setNotificationType("success");
-      setNotificationMessage("Data refreshed successfully");
+      setNotificationMessage("Signed letters data refreshed successfully");
       setNotificationOpen(true);
     } catch (error) {
       setNotificationType("error");
@@ -271,22 +266,24 @@ const SignedLetters = () => {
         accessor: "actions",
         render: (row) => (
           <div className="flex items-center gap-3">
-            <button
+            <motion.button
+              whileTap={{ scale: 0.9 }}
               onClick={() => handleDownload(row.id)}
               className="px-4 py-2 flex items-center space-x-2 text-blue-600 hover:bg-blue-100 rounded-lg transition-colors"
               title="Download"
             >
               <FaDownload className="w-4 h-4" />
               <span className="font-semibold">Download</span>
-            </button>
-            <button
+            </motion.button>
+            <motion.button
+              whileTap={{ scale: 0.9 }}
               onClick={() => handleDelete(row.id)}
               className="px-4 py-2 flex items-center space-x-2 text-red-600 hover:bg-red-100 rounded-lg transition-colors"
               title="Delete"
             >
               <FaTrash className="w-4 h-4" />
               <span className="font-semibold">Delete</span>
-            </button>
+            </motion.button>
           </div>
         ),
       },
@@ -354,7 +351,7 @@ const SignedLetters = () => {
                       type="text"
                       value={uploadForm.applicantName}
                       onChange={(e) => handleApplicantSearch(e.target.value)}
-                      className="w-full px-4 py-2.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                      className="w-full px-4 py-2.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-primary-600 focus:border-primary-600"
                       required
                     />
 
@@ -440,28 +437,53 @@ const SignedLetters = () => {
                       Upload File
                     </label>
                     <div className="flex items-center justify-center w-full">
-                      <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-200">
-                        <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                          <LuHardDriveUpload className="w-10 h-10 mb-3 text-gray-400" />
-                          <p className="mb-2 text-sm text-gray-500">
-                            <span className="font-semibold">
-                              Click to upload
-                            </span>{" "}
-                            or drag and drop
-                          </p>
-                          <p className="text-xs text-gray-500">
-                            PDF, DOC, or DOCX (MAX. 10MB)
-                          </p>
-                        </div>
+                      <label className="flex flex-col items-center justify-center w-full h-[5.5rem] border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-200">
+                        {uploadForm.file ? (
+                          <div className="flex items-center justify-between w-full px-4 py-2">
+                            <div className="flex items-center gap-4 px-4">
+                              <LuHardDriveUpload className="w-6 h-6 text-gray-400" />
+                              <span className="text-sm text-gray-700">
+                                {uploadForm.file.name}
+                              </span>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setUploadForm({ ...uploadForm, file: null });
+                              }}
+                              className="p-1 text-gray-500 hover:text-red-500"
+                            >
+                              <IoClose className="w-5 h-5" />
+                            </button>
+                          </div>
+                        ) : (
+                          <div className="flex items-center gap-4">
+                            <LuHardDriveUpload className="w-10 h-10 text-gray-400" />
+                            <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                              <p className="mb-2 text-sm text-gray-500">
+                                <span className="font-semibold text-primary-600">
+                                  Click to upload
+                                </span>{" "}
+                                or drag and drop
+                              </p>
+                              <p className="text-xs text-gray-500">
+                                PDF, DOC, or DOCX (MAX. 10MB)
+                              </p>
+                            </div>
+                          </div>
+                        )}
                         <input
                           type="file"
                           className="hidden"
-                          onChange={(e) =>
-                            setUploadForm({
-                              ...uploadForm,
-                              file: e.target.files[0],
-                            })
-                          }
+                          onChange={(e) => {
+                            if (e.target.files && e.target.files[0]) {
+                              setUploadForm({
+                                ...uploadForm,
+                                file: e.target.files[0],
+                              });
+                            }
+                          }}
                           accept=".pdf,.doc,.docx"
                           required
                         />

@@ -173,7 +173,7 @@ const DataTable = ({
             <motion.button
               whileTap={{ scale: 0.90 }}
               onClick={onRefresh}
-              className="px-4 py-2 hover:bg-gray-200 flex items-center gap-2 rounded-xl transition-colors"
+              className="px-4 py-2 hover:bg-gray-200 flex items-center gap-2 rounded-lg transition-colors"
               title="Refresh data"
             >
               <TbRefresh className="w-5 h-5 text-primary-700" /><span className="text-sm font- text-primary-700">Refresh</span>

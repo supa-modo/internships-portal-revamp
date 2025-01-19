@@ -65,6 +65,7 @@ const ExtendInternship = () => {
       ),
     },
     { header: "Department", accessor: "internshipDepartment" },
+    { header: "Supervisor", accessor: "internshipSupervisor" },
     { header: "Phone Number", accessor: "phoneNumber" },
     { header: "Nationality", accessor: "nationality" },
     {

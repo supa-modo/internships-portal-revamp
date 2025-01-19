@@ -10,6 +10,9 @@ import { FaCheck } from "react-icons/fa6";
 import ApprovalModal from "../components/common/Approval";
 import ApplicationDetails from "../components/dashboard/ApplicationDetails";
 import axiosInstance from "../services/api";
+import Footer from "../components/common/Footer";
+import NotificationModal from "../components/common/NotificationModal";
+import SuperAdmin from "../components/dashboard/SuperAdmin";
 
 const DashboardLayout = () => {
   const [activeSection, setActiveSection] = useState("all");
@@ -18,10 +21,21 @@ const DashboardLayout = () => {
   const [showApprovalModal, setShowApprovalModal] = useState(false);
   const [selectedApplication, setSelectedApplication] = useState(null);
   const [applications, setApplications] = useState([]);
+  const [userRole, setUserRole] = useState(null);
+  const [showAccessDenied, setShowAccessDenied] = useState(false);
 
   useEffect(() => {
     fetchApplications();
-  }, [activeSection]);
+    const fetchUserRole = async () => {
+      try {
+        const response = await axiosInstance.get("/system-users/users/me");
+        setUserRole(response.data.role);
+      } catch (error) {
+        console.error("Error fetching user role:", error);
+      }
+    };
+    fetchUserRole();
+  }, []);
 
   const fetchApplications = async () => {
     try {
@@ -46,10 +60,8 @@ const DashboardLayout = () => {
     const baseColumns = [
       {
         header: "#",
-        accessor: "index", // Use a custom accessor
-        render: (row, index) => (
-          <span>{index + 1}</span> // Display the row index + 1 (since index starts at 0)
-        ),
+        accessor: "index",
+        render: (row, index) => <span>{index + 1}</span>,
       },
       {
         header: "Applicant Name",
@@ -63,10 +75,6 @@ const DashboardLayout = () => {
       {
         header: "Department",
         accessor: "internshipDepartment",
-      },
-      {
-        header: "Phone Number",
-        accessor: "phoneNumber",
       },
       {
         header: "Nationality",
@@ -100,14 +108,24 @@ const DashboardLayout = () => {
           </span>
         ),
       },
-      {
-        header: "Application Date",
-        accessor: "createdAt",
-        isDate: true,
-      },
     ];
 
     if (activeSection === "under-review") {
+      baseColumns.splice(3, 0, {
+        header: "Supervisor",
+        accessor: "supervisor",
+        render: (row) => <span>{row.internshipSupervisor || "N/A"}</span>,
+      });
+
+      baseColumns.splice(
+        baseColumns.findIndex((col) => col.accessor === "phoneNumber"),
+        1
+      );
+      // baseColumns.splice(
+      //   baseColumns.findIndex((col) => col.accessor === "createdAt"),
+      //   1
+      // );
+
       baseColumns.push({
         header: "Action",
         accessor: "action",
@@ -133,12 +151,21 @@ const DashboardLayout = () => {
           </button>
         ),
       });
+    } else {
+      baseColumns.splice(3, 0, {
+        header: "Phone Number",
+        accessor: "phoneNumber",
+      });
+      baseColumns.push({
+        header: "Application Date",
+        accessor: "createdAt",
+        isDate: true,
+      });
     }
 
     return baseColumns;
   };
 
-  // Sample data and configurations for the DataTable
   const tableConfig = {
     columns: getColumns(),
     filters: [
@@ -153,26 +180,22 @@ const DashboardLayout = () => {
     ],
   };
 
-  // Handle menu item clicks
   const handleMenuClick = (section) => {
     setActiveSection(section);
     setActiveFilter(section === "all" ? null : section);
   };
 
-  // Handle approval of an application
   const handleApprove = async (application) => {
     setSelectedApplication(application);
     setIsApproving(true);
     setShowApprovalModal(true);
   };
 
-  // Filter data based on active filter
   const filteredData = applications.filter((item) =>
     activeFilter ? item.status === activeFilter : true
   );
 
   const handleRowClick = (application, event) => {
-    // If we're in under-review section and click is on approve button or its column, only handle approval
     if (
       activeSection === "under-review" &&
       (event.target.closest("button") || event.target.closest("td:last-child"))
@@ -181,20 +204,27 @@ const DashboardLayout = () => {
       return;
     }
 
-    // For all other cases, show application details
     setSelectedApplication(application);
   };
 
   const handleRefresh = async () => {
     try {
       await fetchApplications();
-      // You can add a notification here if desired
     } catch (error) {
       console.error("Error refreshing data:", error);
     }
   };
 
-  // Function to render the appropriate content based on active section
+  const handleSuperAdminAccess = () => {
+    if (userRole !== "admin") {
+      setShowAccessDenied(true);
+      console.log(userRole);
+      return false;
+    }
+    console.log(userRole);
+    return true;
+  };
+
   const renderContent = () => {
     switch (activeSection) {
       case "reports":
@@ -205,6 +235,8 @@ const DashboardLayout = () => {
         return <Letters />;
       case "extend":
         return <ExtendInternship applications={applications} />;
+      case "super-admin":
+        return handleSuperAdminAccess() ? <SuperAdmin /> : null;
       case "all":
       case "under-review":
       case "pending":
@@ -245,17 +277,13 @@ const DashboardLayout = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      {/* Header */}
+    <div className="min-h-screen bg-gray-100 ">
       <Header />
-
-      {/* Main Content */}
-      <div className="px-10 py-4">
+      <div className="px-10 py-4 mb-14">
         <div className="mx-auto">
           <h1 className="text-2xl text-center font-bold text-gray-600 mb-3">
             Human Resource Administration Interface - Internship Applications
           </h1>
-
           <div className="flex gap-6">
             <SideNavbar
               activeItem={activeSection}
@@ -267,8 +295,6 @@ const DashboardLayout = () => {
           </div>
         </div>
       </div>
-
-      {/* Approval Modal */}
       {showApprovalModal && (
         <ApprovalModal
           application={selectedApplication}
@@ -276,6 +302,14 @@ const DashboardLayout = () => {
           type="approval"
         />
       )}
+      <Footer />
+      <NotificationModal
+        isOpen={showAccessDenied}
+        onClose={() => setShowAccessDenied(false)}
+        type="error"
+        title="Access Denied"
+        message="You do not have permission to access the Super Admin section. Please contact your system administrator for access."
+      />
     </div>
   );
 };

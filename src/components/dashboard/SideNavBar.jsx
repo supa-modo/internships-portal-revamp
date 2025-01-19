@@ -86,7 +86,7 @@ const SideNavbar = ({ activeItem = "all", onMenuClick }) => {
       count: null,
     },
     {
-      id: "admin",
+      id: "super-admin",
       label: "Super Admin Console",
       icon: MdOutlineAdminPanelSettings,
       count: null,
