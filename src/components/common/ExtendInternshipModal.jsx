@@ -4,7 +4,6 @@ import { HiCalendar } from "react-icons/hi2";
 import { FaRegUser } from "react-icons/fa6";
 import { FaBuildingColumns } from "react-icons/fa6";
 import NotificationModal from "../common/NotificationModal";
-import { axiosInstance } from "../../services/authService";
 import { formatDate } from "../../utils/dateFormatter";
 import { generateExtensionLetter } from "../../utils/generateLetters";
 import ApprovalModal from "./Approval";
@@ -207,8 +206,12 @@ const ExtensionModal = ({
             newEndDate,
             requestDate,
             onDataChange,
+            onClose,
           }}
-          onClose={() => setShowApprovalModal(false)}
+          onClose={() => {
+            setShowApprovalModal(false);
+            onClose();
+          }}
           type="extension"
         />
       )}

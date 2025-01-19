@@ -5,7 +5,7 @@ import { IoClose } from "react-icons/io5";
 import { FaDownload, FaTrash } from "react-icons/fa";
 import NotificationModal from "../common/NotificationModal";
 import { formatDate } from "../../utils/dateFormatter";
-import { axiosInstance } from "../../services/api";
+import axiosInstance from "../../services/api";
 
 const SignedLetters = () => {
   const [showUploadModal, setShowUploadModal] = useState(false);
@@ -41,18 +41,67 @@ const SignedLetters = () => {
 
   const fetchLetters = async () => {
     try {
+      // Check if token exists
+      const token = localStorage.getItem("token");
+      if (!token) {
+        console.error("No authentication token found");
+        // Redirect to login or show auth error
+        return;
+      }
+
       const response = await axiosInstance.get("/signed-letters");
       setLetters(response.data);
     } catch (error) {
       console.error("Error fetching letters:", error);
+      if (error.response?.status === 401) {
+        // Handle unauthorized access
+        setNotificationType("error");
+        setNotificationMessage("Please log in again to continue.");
+        setNotificationOpen(true);
+        // Optionally redirect to login
+        // window.location.href = '/login';
+      }
+    }
+  };
+
+  const handleDownload = async (id) => {
+    try {
+      const response = await axiosInstance.get(
+        `/signed-letters/${id}/download`,
+        {
+          responseType: "blob",
+        }
+      );
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `signed-letter-${id}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (error) {
       setNotificationType("error");
-      setNotificationMessage("Failed to fetch signed letters");
+      setNotificationMessage("Failed to download selected letter");
+      setNotificationOpen(true);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      await axiosInstance.delete(`/signed-letters/${id}`);
+      fetchLetters(); // Refresh the list
+      setNotificationType("success");
+      setNotificationMessage("Letter deleted successfully");
+      setNotificationOpen(true);
+    } catch (error) {
+      setNotificationType("error");
+      setNotificationMessage("Failed to delete selected letter");
       setNotificationOpen(true);
     }
   };
 
   const searchApplicants = async (searchTerm) => {
-    if (!searchTerm) {
+    if (!searchTerm || searchTerm.trim().length < 1) {
       setSuggestions([]);
       return;
     }
@@ -60,7 +109,7 @@ const SignedLetters = () => {
     setIsSearching(true);
     try {
       const response = await axiosInstance.get(
-        `/internship-applications/search`,
+        "/internship-applications/search",
         {
           params: {
             query: searchTerm,
@@ -68,7 +117,12 @@ const SignedLetters = () => {
           },
         }
       );
-      setSuggestions(response.data);
+
+      if (response.data.length === 0) {
+        setSuggestions([]);
+      } else {
+        setSuggestions(response.data);
+      }
     } catch (error) {
       console.error("Error searching applicants:", error);
     } finally {
@@ -83,6 +137,11 @@ const SignedLetters = () => {
       clearTimeout(searchTimeout.current);
     }
 
+    if (value.trim() === "") {
+      setSuggestions([]);
+      return;
+    }
+
     searchTimeout.current = setTimeout(() => {
       searchApplicants(value);
     }, 300);
@@ -95,7 +154,7 @@ const SignedLetters = () => {
       department: application.internshipDepartment,
       internshipApplicationId: application.id,
     }));
-    setSuggestions([]);
+    setSuggestions([]); // Clear suggestions immediately
   };
 
   const handleUploadSubmit = async (e) => {
@@ -112,7 +171,7 @@ const SignedLetters = () => {
         uploadForm.internshipApplicationId
       );
 
-      await axiosInstance.post("/signed-letters", formData, {
+      const response = await axiosInstance.post("/signed-letters", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -122,10 +181,20 @@ const SignedLetters = () => {
       setNotificationMessage("Signed document uploaded successfully.");
       fetchLetters();
       setShowUploadModal(false);
+      // Reset form fields
+      setUploadForm({
+        applicantName: "",
+        department: "",
+        letterType: "",
+        file: null,
+        internshipApplicationId: null,
+      });
     } catch (error) {
+      console.error("Upload error:", error);
       setNotificationType("error");
       setNotificationMessage(
-        "Failed to upload signed document. Please try again."
+        error.response?.data?.message ||
+          "Failed to upload signed document. Please try again."
       );
     } finally {
       setIsSubmitting(false);
@@ -136,6 +205,19 @@ const SignedLetters = () => {
   const handleNotificationClose = () => {
     setNotificationOpen(false);
     setShowUploadModal(false);
+  };
+
+  const handleRefresh = async () => {
+    try {
+      await fetchLetters();
+      setNotificationType("success");
+      setNotificationMessage("Data refreshed successfully");
+      setNotificationOpen(true);
+    } catch (error) {
+      setNotificationType("error");
+      setNotificationMessage("Failed to refresh data");
+      setNotificationOpen(true);
+    }
   };
 
   const tableConfig = {
@@ -210,6 +292,7 @@ const SignedLetters = () => {
       },
     ],
     data: letters,
+    onRefresh: handleRefresh,
   };
 
   return (
@@ -276,6 +359,24 @@ const SignedLetters = () => {
                     />
 
                     {/* Suggestions Dropdown */}
+                    {isSearching && (
+                      <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg">
+                        <div className="px-4 py-2 text-gray-600">
+                          Searching...
+                        </div>
+                      </div>
+                    )}
+
+                    {suggestions.length === 0 &&
+                      !isSearching &&
+                      uploadForm.applicantName.trim().length > 1 && (
+                        <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg">
+                          <div className="px-4 py-2 text-gray-600">
+                            Applicant not found, try again.
+                          </div>
+                        </div>
+                      )}
+
                     {suggestions.length > 0 && (
                       <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto">
                         {suggestions.map((application) => (

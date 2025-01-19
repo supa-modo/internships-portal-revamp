@@ -8,6 +8,7 @@ import logo from "../../assets/logo.png";
 import { PiUserDuotone } from "react-icons/pi";
 import { GiPadlock } from "react-icons/gi";
 import { BiLogInCircle } from "react-icons/bi";
+import axiosInstance from "../../services/api";
 
 const LoginPage = () => {
   const [credentials, setCredentials] = useState({
@@ -32,15 +33,13 @@ const LoginPage = () => {
     setError("");
 
     try {
-      const result = await login(credentials);
-      if (result.success) {
-        navigate(location.state?.from?.pathname || "/dashboard");
-      } else {
-        setError(result.error || "Invalid login credentials");
+      await login(credentials);
+      navigate(from, { replace: true });
+    } catch (error) {
+      setError(error.message || "Failed to login. Please try again.");
+      if (errRef.current) {
+        errRef.current.focus();
       }
-    } catch (err) {
-      setError(err.message || "An error occurred during login");
-      console.error("Login error:", err);
     } finally {
       setLoading(false);
     }

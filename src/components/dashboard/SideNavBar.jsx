@@ -12,7 +12,7 @@ import {
 } from "react-icons/fa6";
 import { BsArchive, BsUiChecks } from "react-icons/bs";
 import { BiSolidReport } from "react-icons/bi";
-import { axiosInstance } from "../../services/authService";
+import axiosInstance from "../../services/api";
 
 const SideNavbar = ({ activeItem = "all", onMenuClick }) => {
   const [counts, setCounts] = useState({

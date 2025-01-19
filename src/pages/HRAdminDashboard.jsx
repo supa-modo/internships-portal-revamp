@@ -8,8 +8,8 @@ import Policy from "../components/dashboard/Policy";
 import ExtendInternship from "../components/dashboard/ExtendInternship";
 import { FaCheck } from "react-icons/fa6";
 import ApprovalModal from "../components/common/Approval";
-import { axiosInstance } from "../services/api";
 import ApplicationDetails from "../components/dashboard/ApplicationDetails";
+import axiosInstance from "../services/api";
 
 const DashboardLayout = () => {
   const [activeSection, setActiveSection] = useState("all");
@@ -185,6 +185,15 @@ const DashboardLayout = () => {
     setSelectedApplication(application);
   };
 
+  const handleRefresh = async () => {
+    try {
+      await fetchApplications();
+      // You can add a notification here if desired
+    } catch (error) {
+      console.error("Error refreshing data:", error);
+    }
+  };
+
   // Function to render the appropriate content based on active section
   const renderContent = () => {
     switch (activeSection) {
@@ -212,6 +221,7 @@ const DashboardLayout = () => {
               filters={tableConfig.filters}
               searchPlaceholder="Search internship applications..."
               onRowClick={(item, event) => handleRowClick(item, event)}
+              onRefresh={handleRefresh}
             />
             {selectedApplication && (
               <ApplicationDetails

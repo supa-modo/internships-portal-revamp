@@ -1,11 +1,12 @@
 import React, { useState, useMemo } from "react";
-import { IoSearch, IoCheckmark } from "react-icons/io5";
+import { IoSearch, IoCheckmark, IoRefresh } from "react-icons/io5";
 import { IoMdClose } from "react-icons/io";
 import { HiMiniArrowsUpDown } from "react-icons/hi2";
-import { TbChevronLeft, TbChevronRight } from "react-icons/tb";
+import { TbChevronLeft, TbChevronRight, TbRefresh } from "react-icons/tb";
 import { FaCheck } from "react-icons/fa6";
 import ApplicationDetails from "../dashboard/ApplicationDetails";
 import { formatDate } from "../../utils/dateFormatter";
+import { motion } from "framer-motion";
 
 const DataTable = ({
   title,
@@ -17,6 +18,7 @@ const DataTable = ({
   defaultItemsPerPage = 10,
   headerButtons, // New prop for custom buttons
   onDataChange, // Add this prop
+  onRefresh, // Add this prop
 }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeFilters, setActiveFilters] = useState({});
@@ -166,6 +168,18 @@ const DataTable = ({
         </h2>
 
         <div className="flex items-center gap-6">
+          {/* Refresh Button */}
+          {onRefresh && (
+            <motion.button
+              whileTap={{ scale: 0.90 }}
+              onClick={onRefresh}
+              className="px-4 py-2 hover:bg-gray-200 flex items-center gap-2 rounded-xl transition-colors"
+              title="Refresh data"
+            >
+              <TbRefresh className="w-5 h-5 text-primary-700" /><span className="text-sm font- text-primary-700">Refresh</span>
+            </motion.button>
+          )}
+
           {/* Custom Buttons */}
           {headerButtons && (
             <div className="flex items-center gap-3">{headerButtons}</div>
@@ -203,7 +217,8 @@ const DataTable = ({
               {filters.map((filter) => (
                 <div key={filter.key} className="flex gap-2">
                   {filter.options.map((option) => (
-                    <button
+                    <motion.button
+                      whileTap={{ scale: 0.95 }}
                       key={option.value}
                       onClick={() =>
                         handleFilterClick(filter.key, option.value)
@@ -219,7 +234,7 @@ const DataTable = ({
                         <FaCheck className="h-4 w-4" />
                       )}
                       {option.label}
-                    </button>
+                    </motion.button>
                   ))}
                 </div>
               ))}

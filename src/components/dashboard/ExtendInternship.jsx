@@ -2,9 +2,9 @@ import React, { useState, useEffect } from "react";
 import DataTable from "../common/DataTable";
 import ExtensionModal from "../common/ExtendInternshipModal";
 import { TbArrowMoveRight } from "react-icons/tb";
-import { axiosInstance } from "../../services/api";
 import { formatDate } from "../../utils/dateFormatter";
 import ApplicationDetails from "../dashboard/ApplicationDetails";
+import axiosInstance from "../../services/api";
 
 const ExtendInternship = () => {
   const [internships, setInternships] = useState([]);
@@ -121,15 +121,25 @@ const ExtendInternship = () => {
     }
   };
 
+  const handleRefresh = async () => {
+    try {
+      await fetchInternships();
+      // You can add a notification here if desired
+    } catch (error) {
+      console.error("Error refreshing data:", error);
+    }
+  };
+
   return (
     <>
       <DataTable
-  title="Extend Internship Periods"
-  columns={columns}
-  data={internships}
-  searchPlaceholder="Search approved internships..."
-  onRowClick={(item, event) => handleRowClick(item, event)} 
-/>
+        title="Extend Internship Periods"
+        columns={columns}
+        data={internships}
+        searchPlaceholder="Search approved internships..."
+        onRowClick={(item, event) => handleRowClick(item, event)}
+        onRefresh={handleRefresh}
+      />
 
       {/* Application Details Modal */}
       {selectedInternship && showApplicationDetails && (

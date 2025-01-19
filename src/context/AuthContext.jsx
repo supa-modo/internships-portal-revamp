@@ -27,16 +27,11 @@ export const AuthProvider = ({ children }) => {
   const login = async (credentials) => {
     try {
       const response = await loginUser(credentials);
-      const { token, user } = response;
-
-      localStorage.setItem("token", token);
-      localStorage.setItem("user", JSON.stringify(user));
       setIsAuthenticated(true);
-      setUser(user);
-      return { success: true };
+      setUser(response.user);
+      return response;
     } catch (error) {
-      console.error("Login error:", error);
-      return { success: false, error: error.message };
+      throw error;
     }
   };
 

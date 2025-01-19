@@ -6,8 +6,8 @@ import {
   generateAcceptanceLetter,
   generateExtensionLetter,
 } from "../../utils/generateLetters";
-import { axiosInstance } from "../../services/api";
 import { formatDate } from "../../utils/dateFormatter";
+import axiosInstance from "../../services/api";
 
 const ApprovalModal = ({ application, onClose, type = "approval" }) => {
   const [isSendingEmail, setIsSendingEmail] = useState(false);
@@ -85,6 +85,14 @@ const ApprovalModal = ({ application, onClose, type = "approval" }) => {
   const handleNotificationClose = () => {
     setNotificationModal({ isOpen: false, type: "success", message: "" });
     onClose();
+    // This will trigger the parent ExtendInternshipModal to close
+    if (application.onClose) {
+      application.onClose();
+    }
+    // Refresh the data
+    if (application.onDataChange) {
+      application.onDataChange();
+    }
   };
 
   return (

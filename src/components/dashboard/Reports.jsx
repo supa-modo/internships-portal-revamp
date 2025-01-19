@@ -1,19 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { LuDownload } from "react-icons/lu";
-import { IoPrintOutline } from "react-icons/io5";
-import { IoFilter, IoClose } from "react-icons/io5";
+import { IoPrintOutline, IoFilter, IoClose, IoRefresh } from "react-icons/io5";
 import { FiSearch } from "react-icons/fi";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   generateFullReportPDF,
   generateReportPDF,
 } from "../../utils/generateReportPDF";
-import { axiosInstance } from "../../services/api";
 import NotificationModal from "../common/NotificationModal";
 import nationalitiesData from "../../data/Nationalities.json";
 import supervisorsData from "../../data/eacSupervisors.json";
 import depts_unitsData from "../../data/eacDepartments.json";
 import { TbLoader, TbChevronLeft, TbChevronRight } from "react-icons/tb";
+import axiosInstance from "../../services/api";
 
 const Reports = () => {
   const [loading, setLoading] = useState(false);
@@ -22,11 +21,10 @@ const Reports = () => {
     startDate: "",
     endDate: "",
     status: "",
+    internshipStatus: "",
     department: "",
     supervisor: "",
-    institution: "",
     nationality: "",
-    duration: "",
   });
   const [stats, setStats] = useState({
     total: 0,
@@ -194,11 +192,35 @@ const Reports = () => {
               {showFilters ? <IoClose size={20} /> : <IoFilter size={20} />}
               {showFilters ? "Hide Filters" : "Show Filters"}
             </motion.button>
+
+            {/* Add Reset Filters Button */}
+            <motion.button
+              whileTap={{ scale: 0.95 }}
+              onClick={() => {
+                setFilters({
+                  startDate: "",
+                  endDate: "",
+                  status: "",
+                  internshipStatus: "",
+                  department: "",
+                  supervisor: "",
+                  nationality: "",
+                });
+                handleGenerateReport(); // Refresh with reset filters
+              }}
+              className="flex items-center gap-2 px-6 py-2 rounded-lg font-medium transition-all bg-red-100 text-red-600 hover:bg-red-200"
+            >
+              <IoRefresh size={20} />
+              <span>Reset Filters</span>
+            </motion.button>
             <button
               onClick={handleGenerateReport}
               className="bg-primary-700  text-white px-8 py-2 rounded-lg font-medium hover:bg-primary-600 transition-all flex items-center gap-2"
             >
-              <TbLoader size={20} className="" />
+              <TbLoader
+                size={20}
+                className={`${loading ? "animate-spin" : ""}`}
+              />
               <span>Generate Report</span>
             </button>
           </div>
@@ -221,11 +243,109 @@ const Reports = () => {
                   <input
                     type="date"
                     name="startDate"
+                    value={filters.startDate}
                     onChange={handleFilterChange}
                     className="w-full rounded-lg border border-gray-200 p-2.5 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
                   />
                 </div>
-                {/* ... Other filter inputs with similar styling ... */}
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-700">
+                    End Date
+                  </label>
+                  <input
+                    type="date"
+                    name="endDate"
+                    value={filters.endDate}
+                    onChange={handleFilterChange}
+                    className="w-full rounded-lg border border-gray-200 p-2.5 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-700">
+                    Status
+                  </label>
+                  <select
+                    name="status"
+                    value={filters.status}
+                    onChange={handleFilterChange}
+                    className="w-full rounded-lg border border-gray-200 p-2.5 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+                  >
+                    <option value="">All Statuses</option>
+                    <option value="pending">Pending</option>
+                    <option value="under-review">Under Review</option>
+                    <option value="approved">Approved</option>
+                    <option value="archived">Archived</option>
+                  </select>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-700">
+                    Internship Status
+                  </label>
+                  <select
+                    name="internshipStatus"
+                    value={filters.internshipStatus}
+                    onChange={handleFilterChange}
+                    className="w-full rounded-lg border border-gray-200 p-2.5 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+                  >
+                    <option value="">All</option>
+                    <option value="active">Active</option>
+                    <option value="completed">Completed</option>
+                  </select>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-700">
+                    Department
+                  </label>
+                  <select
+                    name="department"
+                    value={filters.department}
+                    onChange={handleFilterChange}
+                    className="w-full rounded-lg border border-gray-200 p-2.5 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+                  >
+                    <option value="">All Departments</option>
+                    {depts_unitsData.units.map((dept) => (
+                      <option key={dept} value={dept}>
+                        {dept}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-700">
+                    Supervisor
+                  </label>
+                  <select
+                    name="supervisor"
+                    value={filters.supervisor}
+                    onChange={handleFilterChange}
+                    className="w-full rounded-lg border border-gray-200 p-2.5 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+                  >
+                    <option value="">All Supervisors</option>
+                    {supervisorsData.supervisors.map((supervisor) => (
+                      <option key={supervisor} value={supervisor}>
+                        {supervisor}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-700">
+                    Nationality
+                  </label>
+                  <select
+                    name="nationality"
+                    value={filters.nationality}
+                    onChange={handleFilterChange}
+                    className="w-full rounded-lg border border-gray-200 p-2.5 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+                  >
+                    <option value="">All Nationalities</option>
+                    {nationalitiesData.nationalities.map((nat) => (
+                      <option key={nat.nationality} value={nat.nationality}>
+                        {nat.nationality}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
             </motion.div>
           )}
@@ -302,7 +422,26 @@ const Reports = () => {
                         ).toLocaleDateString()}
                       </td>
                       <td className="px-6 py-4 text-sm border-b border-gray-200 text-gray-600">
-                        {report.status}
+                        <span
+                          className={`px-3 border pb-1.5 pt-1 rounded-lg text-xs ${
+                            report.status === "pending"
+                              ? "bg-yellow-200 text-yellow-800"
+                              : ""
+                          }
+              ${
+                report.status === "under-review"
+                  ? "bg-blue-200 text-blue-800"
+                  : ""
+              }
+              ${
+                report.status === "approved"
+                  ? "bg-green-200 text-green-800"
+                  : ""
+              }
+              ${report.status === "archived" ? "bg-red-200 text-red-600" : ""}`}
+                        >
+                          {report.status}
+                        </span>
                       </td>
                       <td className="px-6 py-4 text-sm border-b border-gray-200 text-gray-600">
                         <button
@@ -321,8 +460,8 @@ const Reports = () => {
                       colSpan="8"
                       className="px-6 py-8 font-semibold border-b border-gray-300 border-x text-center text-gray-400"
                     >
-                      No reports found. Use the filter button above to add application filters and click Generate
-                      Report.
+                      No reports found. Use the filter button above to add
+                      application filters and click Generate Report.
                     </td>
                   </tr>
                 )}

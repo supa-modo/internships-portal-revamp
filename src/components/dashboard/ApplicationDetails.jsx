@@ -10,8 +10,8 @@ import { IoClose } from "react-icons/io5";
 import { LuMail } from "react-icons/lu";
 import { HiMiniDevicePhoneMobile, HiHomeModern } from "react-icons/hi2";
 import NotificationModal from "../common/NotificationModal";
-import { axiosInstance } from "../../services/api";
 import { formatDate } from "../../utils/dateFormatter";
+import axiosInstance from "../../services/api";
 
 const ApplicationDetails = ({
   application,
@@ -155,7 +155,20 @@ const ApplicationDetails = ({
   const handleNotificationClose = () => {
     setIsNotificationOpen(false);
     if (notificationType === "success") {
-      onClose && onClose();
+      // Only refresh data, don't close modal
+      onDataChange && onDataChange();
+      // Refresh the application details
+      const fetchUpdatedData = async () => {
+        try {
+          const response = await axiosInstance.get(
+            `/internship-applications/${application.id}`
+          );
+          setInternshipData(response.data);
+        } catch (error) {
+          console.error("Error fetching updated data:", error);
+        }
+      };
+      fetchUpdatedData();
     }
   };
 
