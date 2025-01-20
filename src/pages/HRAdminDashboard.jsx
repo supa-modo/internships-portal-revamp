@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Header from "../components/common/Header";
 import DataTable from "../components/common/DataTable";
 import SideNavbar from "../components/dashboard/SideNavBar";
@@ -13,16 +13,19 @@ import axiosInstance from "../services/api";
 import Footer from "../components/common/Footer";
 import NotificationModal from "../components/common/NotificationModal";
 import SuperAdmin from "../components/dashboard/SuperAdmin";
+import { useNavigate } from "react-router-dom";
 
 const DashboardLayout = () => {
   const [activeSection, setActiveSection] = useState("all");
-  const [activeFilter, setActiveFilter] = useState(null);
   const [isApproving, setIsApproving] = useState(false);
   const [showApprovalModal, setShowApprovalModal] = useState(false);
   const [selectedApplication, setSelectedApplication] = useState(null);
   const [applications, setApplications] = useState([]);
   const [userRole, setUserRole] = useState(null);
   const [showAccessDenied, setShowAccessDenied] = useState(false);
+  const navigate = useNavigate();
+  const [searchTerm, setSearchTerm] = useState("");
+  const dataTableRef = useRef(null);
 
   useEffect(() => {
     fetchApplications();
@@ -41,7 +44,7 @@ const DashboardLayout = () => {
     try {
       const response = await axiosInstance.get("/internship-applications/", {
         params: {
-          status: ["extend", "letters"].includes(activeSection)
+          status: ["extend", "letters", "super-admin"].includes(activeSection)
             ? "approved"
             : "reports".includes(activeSection)
             ? "all"
@@ -180,9 +183,31 @@ const DashboardLayout = () => {
     ],
   };
 
-  const handleMenuClick = (section) => {
+  const handleMenuClick = async (section) => {
     setActiveSection(section);
-    setActiveFilter(section === "all" ? null : section);
+
+    // Reset DataTable state
+    if (dataTableRef.current) {
+      dataTableRef.current.resetFilters();
+    }
+
+    // Fetch new data for the section
+    try {
+      const response = await axiosInstance.get("/internship-applications/", {
+        params: {
+          status: ["extend", "letters", "super-admin"].includes(section)
+            ? "approved"
+            : "reports".includes(section)
+            ? "all"
+            : section !== "all"
+            ? section
+            : undefined,
+        },
+      });
+      setApplications(response.data);
+    } catch (error) {
+      console.error("Error fetching applications:", error);
+    }
   };
 
   const handleApprove = async (application) => {
@@ -190,10 +215,6 @@ const DashboardLayout = () => {
     setIsApproving(true);
     setShowApprovalModal(true);
   };
-
-  const filteredData = applications.filter((item) =>
-    activeFilter ? item.status === activeFilter : true
-  );
 
   const handleRowClick = (application, event) => {
     if (
@@ -217,12 +238,14 @@ const DashboardLayout = () => {
 
   const handleSuperAdminAccess = () => {
     if (userRole !== "admin") {
-      setShowAccessDenied(true);
-      console.log(userRole);
       return false;
     }
-    console.log(userRole);
     return true;
+  };
+
+  const handleAccessDeniedClose = () => {
+    setShowAccessDenied(false);
+    navigate("/dashboard");
   };
 
   const renderContent = () => {
@@ -236,7 +259,13 @@ const DashboardLayout = () => {
       case "extend":
         return <ExtendInternship applications={applications} />;
       case "super-admin":
-        return handleSuperAdminAccess() ? <SuperAdmin /> : null;
+        if (!handleSuperAdminAccess()) {
+          setTimeout(() => {
+            setShowAccessDenied(true);
+          }, 0);
+          return null;
+        }
+        return <SuperAdmin />;
       case "all":
       case "under-review":
       case "pending":
@@ -245,15 +274,17 @@ const DashboardLayout = () => {
         return (
           <>
             <DataTable
+              ref={dataTableRef}
               title={`${
                 activeSection.charAt(0).toUpperCase() + activeSection.slice(1)
               } Internship Applications`}
               columns={tableConfig.columns}
-              data={filteredData}
+              data={applications}
               filters={tableConfig.filters}
               searchPlaceholder="Search internship applications..."
-              onRowClick={(item, event) => handleRowClick(item, event)}
-              onRefresh={handleRefresh}
+              onRowClick={handleRowClick}
+              onRefresh={fetchApplications}
+              activeSection={activeSection}
             />
             {selectedApplication && (
               <ApplicationDetails
@@ -305,10 +336,10 @@ const DashboardLayout = () => {
       <Footer />
       <NotificationModal
         isOpen={showAccessDenied}
-        onClose={() => setShowAccessDenied(false)}
+        onClose={handleAccessDeniedClose}
         type="error"
         title="Access Denied"
-        message="You do not have permission to access the Super Admin section. Please contact your system administrator for access."
+        message="You do not have permission to access this section. Please contact your system administrator for access."
       />
     </div>
   );
