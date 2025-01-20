@@ -245,7 +245,7 @@ const DashboardLayout = () => {
 
   const handleAccessDeniedClose = () => {
     setShowAccessDenied(false);
-    navigate("/dashboard");
+    navigate("/");
   };
 
   const renderContent = () => {

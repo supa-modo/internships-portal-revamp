@@ -6,12 +6,18 @@ import {
   FaGraduationCap,
   FaShieldAlt,
 } from "react-icons/fa";
-import { IoClose } from "react-icons/io5";
+import {
+  IoClose,
+  IoDocument,
+  IoDocuments,
+  IoDocumentSharp,
+} from "react-icons/io5";
 import { LuMail } from "react-icons/lu";
 import { HiMiniDevicePhoneMobile, HiHomeModern } from "react-icons/hi2";
 import NotificationModal from "../common/NotificationModal";
 import { formatDate } from "../../utils/dateFormatter";
 import axiosInstance from "../../services/api";
+import { motion } from "framer-motion";
 
 const ApplicationDetails = ({
   application,
@@ -34,6 +40,12 @@ const ApplicationDetails = ({
     internshipStartDate: "",
     internshipEndDate: "",
     status: "pending",
+  });
+  const [notification, setNotification] = useState({
+    isOpen: false,
+    type: "error",
+    title: "",
+    message: "",
   });
 
   useEffect(() => {
@@ -212,6 +224,82 @@ const ApplicationDetails = ({
     }
   };
 
+  // Update the checkDocumentAvailability function
+  const checkDocumentAvailability = async (documentPath, name) => {
+    if (!documentPath) {
+      setNotification({
+        isOpen: true,
+        type: "error",
+        title: "Document Error",
+        message: `${name} is not available.`,
+      });
+      return false;
+    }
+
+    try {
+      // Get just the filename from the path
+      const filename = documentPath.split('/').pop();
+      
+      // Make the request to the correct endpoint
+      const response = await axiosInstance.get(`/internship-applications/documents/${filename}`, {
+        responseType: 'blob',
+      });
+
+      // Check if we received valid data
+      if (!response.data || response.data.size === 0) {
+        throw new Error('Invalid document received');
+      }
+
+      // Create and open the blob URL
+      const blob = new Blob([response.data]);
+      const url = window.URL.createObjectURL(blob);
+      window.open(url, '_blank');
+      
+      // Clean up
+      setTimeout(() => window.URL.revokeObjectURL(url), 100);
+      return true;
+    } catch (error) {
+      console.error('Document fetch error:', error);
+      setNotification({
+        isOpen: true,
+        type: "error",
+        title: "Document Error",
+        message: `Failed to fetch ${name}. Please ensure the document exists and try again.`,
+      });
+      return false;
+    }
+  };
+
+  // Update the documentSection array
+  const documentSection = [
+    {
+      title: "Uploaded Documents",
+      icon: <FaFilePdf className="w-6 h-6 text-orange-600" />,
+      content: [
+        {
+          label: "ID/Passport Document",
+          value: "Available",
+          type: "document",
+          documentPath: application?.identificationDocument,
+        },
+        {
+          label: "Academic Documents",
+          value: "Available",
+          type: "document",
+          documentPath: application?.academicDocuments,
+        },
+        {
+          label: "Insurance Document",
+          value: "Available",
+          type: "document",
+          documentPath: application?.insuranceDocument,
+        },
+      ].filter(doc => doc.documentPath), // Only show documents that have paths
+      editable: false,
+      bgColor: "bg-orange-50",
+    },
+  ];
+
   const sections = [
     {
       title: "Education Details",
@@ -285,6 +373,30 @@ const ApplicationDetails = ({
       gridColumns: "grid-cols-3", // Added for 3-column layout
     },
   ];
+
+  // Update the renderDocumentSectionContent function
+  const renderDocumentSectionContent = (documents) => {
+    return documents.map((document, index) => (
+      <motion.div
+        whileHover={{ scale: 1.02 }}
+        whileTap={{ scale: 0.95 }}
+        key={index}
+        className="px-3 py-2.5 bg-gray-100/70 shadow-md font-nunito-sans rounded-lg hover:shadow-md transition-shadow"
+      >
+        <button
+          onClick={async () => {
+            await checkDocumentAvailability(document.documentPath, document.label);
+          }}
+          className="w-full flex items-center space-x-4 text-gray-600 hover:text-blue-600"
+        >
+          <FaFilePdf className="w-6 h-6 text-primary-700" />
+          <span className="text-sm font-semibold">
+            {document.label}
+          </span>
+        </button>
+      </motion.div>
+    ));
+  };
 
   return (
     <>
@@ -388,44 +500,17 @@ const ApplicationDetails = ({
                 </div>
 
                 {/* Documents Section */}
-                <div className="mt-6">
-                  <h3 className="font-semibold text-gray-800 mb-3">
-                    Uploaded Documents
-                  </h3>
-                  <div className="space-y-1">
-                    <a
-                      href={""}
-                      className="flex items-center gap-3 p-3 bg-primary-50 rounded-lg shadow-md hover:shadow-lg transition-shadow"
-                    >
-                      <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
-                        <FaFilePdf />
-                      </div>
-                      <span className="text-sm font-medium text-gray-700 truncate">
-                        ID - {application.identificationDocument}
-                      </span>
-                    </a>
-                    <a
-                      href={""}
-                      className="flex items-center gap-3 p-3 bg-primary-50 rounded-lg shadow-md hover:shadow-lg transition-shadow"
-                    >
-                      <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
-                        <FaFilePdf />
-                      </div>
-                      <span className="text-sm font-medium text-gray-700 truncate">
-                        Academic - {application.academicDocuments}
-                      </span>
-                    </a>
-                    <a
-                      href={""}
-                      className="flex items-center gap-3 p-3 bg-primary-50 rounded-lg shadow-md hover:shadow-lg transition-shadow"
-                    >
-                      <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
-                        <FaFilePdf />
-                      </div>
-                      <span className="text-sm font-medium text-gray-700 truncate">
-                        Insurance - {application.insuranceDocument}
-                      </span>
-                    </a>
+                <div className="rounded-xl border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow bg-primary-100 mt-4">
+                  <div className="flex items-center gap-3 p-4 border-b border-gray-200/50">
+                    <IoDocuments className="w-8 h-8 text-primary-600" />
+                    <h3 className="font-semibold text-gray-800">
+                      Uploaded Documents
+                    </h3>
+                  </div>
+                  <div className="py-5 px-2 bg-white/80">
+                    <div className="space-y-2">
+                      {renderDocumentSectionContent(documentSection[0].content)}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -530,8 +615,10 @@ const ApplicationDetails = ({
                   }))
                 }
                 disabled={!isEditing}
-                className={`px-4 py-2 rounded-lg border ${
-                  isEditing ? "border-gray-300" : "border-gray-200 bg-gray-50"
+                className={`px-4 py-1.5 font-bold font-nunito-sans text-gray-600 focus:outline-none focus:ring-1 focus:ring-primary-600 focus:border-primary-600 rounded-lg border ${
+                  isEditing
+                    ? "border-gray-300"
+                    : "border-gray-200 bg-gray-50 cursor-not-allowed"
                 }`}
               >
                 {statuses.map((status) => (
@@ -597,6 +684,15 @@ const ApplicationDetails = ({
         type={notificationType}
         confirmText="Confirm"
         cancelText="Cancel"
+      />
+
+      {/* Add NotificationModal for document errors */}
+      <NotificationModal
+        isOpen={notification.isOpen}
+        onClose={() => setNotification((prev) => ({ ...prev, isOpen: false }))}
+        type={notification.type}
+        title={notification.title}
+        message={notification.message}
       />
     </>
   );

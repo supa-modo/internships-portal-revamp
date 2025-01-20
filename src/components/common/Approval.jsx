@@ -16,23 +16,31 @@ const ApprovalModal = ({ application, onClose, type = "approval" }) => {
     type: "success",
     message: "",
   });
-  const [letterData, setLetterData] = useState(null);
+  const [letterPreview, setLetterPreview] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const generateLetter = async () => {
       try {
-        const letterPdfString =
-          type === "approval"
-            ? generateAcceptanceLetter(application)
-            : generateExtensionLetter(
-                application, // applicantDetails
-                application.internshipEndDate, // currentEndDate
-                application.newEndDate, // newEndDate
-                application.requestDate // extensionReqDate
-              );
-        setLetterData(letterPdfString);
+        setIsLoading(true);
+        let letterData;
+
+        if (type === "approval") {
+          letterData = await generateAcceptanceLetter(application);
+        } else if (type === "extension") {
+          letterData = await generateExtensionLetter(
+            application,
+            application.internshipEndDate,
+            application.newEndDate,
+            application.requestDate
+          );
+        }
+
+        setLetterPreview(letterData);
       } catch (error) {
         console.error("Error generating letter:", error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -129,12 +137,20 @@ const ApprovalModal = ({ application, onClose, type = "approval" }) => {
               {/* Document Preview */}
               <div className="w-[56%] p-4 flex flex-col">
                 <div className="flex-1 border border-gray-200 rounded-lg overflow-hidden">
-                  {letterData && (
+                  {isLoading ? (
+                    <div className="flex items-center justify-center h-full">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600" />
+                    </div>
+                  ) : letterPreview ? (
                     <iframe
-                      src={letterData}
+                      src={letterPreview}
                       className="w-full h-full"
                       title="Letter Preview"
                     />
+                  ) : (
+                    <div className="text-center text-sm text-gray-500">
+                      Error generating letter preview !!
+                    </div>
                   )}
                 </div>
               </div>

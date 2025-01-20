@@ -34,7 +34,7 @@ const LoginPage = () => {
 
     try {
       await login(credentials);
-      navigate(from, { replace: true });
+      navigate("/dashboard", { replace: true });
     } catch (error) {
       setError(error.message || "Failed to login. Please try again.");
       if (errRef.current) {

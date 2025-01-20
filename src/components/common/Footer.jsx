@@ -8,6 +8,7 @@ import {
   FaPhone,
   FaEnvelope,
 } from "react-icons/fa";
+import { FaXTwitter } from "react-icons/fa6";
 
 const Footer = () => {
   return (
@@ -27,7 +28,7 @@ const Footer = () => {
               The East African Community (EAC) is a regional intergovernmental
               organization headquartered in Arusha, Tanzania, committed to
               fostering prosperity, competitiveness, security, and political
-              unity.
+              unity among East African countries.
             </p>
           </div>
 
@@ -105,7 +106,7 @@ const Footer = () => {
                 href="https://facebook.com/eac"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bg-primary-800 p-2 rounded-full hover:bg-primary-700 transition duration-300"
+                className="bg-primary-800 border border-gray-50/5 p-2 rounded-full hover:bg-primary-700 transition duration-300"
               >
                 <FaFacebook className="text-2xl" />
               </a>
@@ -113,15 +114,15 @@ const Footer = () => {
                 href="https://twitter.com/eac"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bg-primary-800 p-2 rounded-full hover:bg-primary-700 transition duration-300"
+                className="bg-primary-800 p-2 border border-gray-50/5 rounded-full hover:bg-primary-700 transition duration-300"
               >
-                <FaTwitter className="text-2xl" />
+                <FaXTwitter className="text-2xl" />
               </a>
               <a
                 href="https://linkedin.com/company/eac"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bg-primary-800 p-2 rounded-full hover:bg-primary-700 transition duration-300"
+                className="bg-primary-800 p-2 border border-gray-50/5 rounded-full hover:bg-primary-700 transition duration-300"
               >
                 <FaLinkedin className="text-2xl" />
               </a>
@@ -129,7 +130,7 @@ const Footer = () => {
                 href="https://youtube.com/eac"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bg-primary-800 p-2 rounded-full hover:bg-primary-700 transition duration-300"
+                className="bg-primary-800 p-2 border border-gray-50/5 rounded-full hover:bg-primary-700 transition duration-300"
               >
                 <FaYoutube className="text-2xl" />
               </a>

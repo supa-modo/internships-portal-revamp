@@ -288,7 +288,7 @@ const Reports = () => {
                     onChange={handleFilterChange}
                     className="w-full font-bold font-nunito-sans text-[15px] text-gray-700 rounded-lg border border-gray-200 p-2.5 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-600"
                   >
-                    <option value="">All</option>
+                    <option value="">Active & Completed</option>
                     <option value="active">Active</option>
                     <option value="completed">Completed</option>
                   </select>

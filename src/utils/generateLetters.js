@@ -1,7 +1,51 @@
 import jsPDF from "jspdf";
+import QRCode from "qrcode";
 import logoImage from "/logo.png";
 import { formatDate } from "./dateFormatter";
 import { mapNationalityToCountry } from "./nationalitiesMapper"; // Import the mapping function
+
+// Function to generate a unique number
+const generateUniqueNumber = () => {
+  const timestamp = Date.now().toString().slice(-6);
+  const random = Math.floor(Math.random() * 9000 + 1000);
+  return `${timestamp}${random}`;
+};
+
+// Function to add QR code and unique number
+const addQRCodeAndNumber = async (doc, uniqueNumber) => {
+  // Create a detailed data object for QR code
+  const qrData = {
+    ref: `EAC-IMS-${uniqueNumber}`,
+    generated: new Date().toISOString(),
+  };
+
+  // Convert the data object to a JSON string
+  const qrText = JSON.stringify(qrData);
+
+  try {
+    // Generate QR code as data URL with error correction level 'H' for better reliability
+    const qrDataUrl = await QRCode.toDataURL(qrText, {
+      width: 50,
+      margin: 1,
+      errorCorrectionLevel: "H",
+      color: {
+        dark: "#000000",
+        light: "#ffffff",
+      },
+    });
+
+    // Add QR code to bottom left
+    doc.addImage(qrDataUrl, "PNG", 20, 260, 15, 15);
+
+    // Add reference number text below QR code
+    doc.setFontSize(8);
+    doc.setFont("Times", "normal");
+    doc.setTextColor(13, 13, 13);
+    doc.text(`${qrData.ref}`, 20, 280);
+  } catch (err) {
+    console.error("Error generating QR code:", err);
+  }
+};
 
 const addHeader = (doc) => {
   doc.setFont("Times", "bold");
@@ -47,9 +91,14 @@ const addHeader = (doc) => {
   doc.text("Web: http://www.eac.int", doc.internal.pageSize.width - 35, 51, {
     align: "right",
   });
+
+  // Adjust footer margin to leave space for QR code
+  doc.setProperties({
+    marginBottom: 30, // Increase bottom margin
+  });
 };
 
-export const generateAcceptanceLetter = (applicantDetails) => {
+export const generateAcceptanceLetter = async (applicantDetails) => {
   const currentDate = new Date().toLocaleDateString("en-US", {
     year: "numeric",
     month: "long",
@@ -69,11 +118,11 @@ export const generateAcceptanceLetter = (applicantDetails) => {
   doc.text(
     `${applicantDetails?.surname} ${applicantDetails?.firstName} ${
       applicantDetails?.otherNames || ""
-    }`,
+    },`,
     20,
     75
   );
-  doc.text(`${applicantDetails.address || ""}`, 20, 80);
+  doc.text(`${applicantDetails.address || ""},`, 20, 80);
   doc.text(
     `${
       mapNationalityToCountry(applicantDetails.nationality)?.toUpperCase() || ""
@@ -87,7 +136,7 @@ export const generateAcceptanceLetter = (applicantDetails) => {
   doc.text(
     `Dear ${applicantDetails?.surname} ${applicantDetails?.firstName} ${
       applicantDetails?.otherNames || ""
-    }`,
+    },`,
     22,
     104
   );
@@ -141,10 +190,14 @@ do hereby accept the internship offer dated ${currentDate} as per the terms and 
     235
   );
 
+  // Add QR code and unique number
+  const uniqueNumber = generateUniqueNumber();
+  await addQRCodeAndNumber(doc, uniqueNumber);
+
   return doc.output("dataurlstring");
 };
 
-export const generateExtensionLetter = (
+export const generateExtensionLetter = async (
   applicantDetails,
   currentEndDate,
   newEndDate,
@@ -240,6 +293,10 @@ do hereby accept the internship extension offer dated ${currentDate} as per the 
     20,
     235
   );
+
+  // Add QR code and unique number
+  const uniqueNumber = generateUniqueNumber();
+  await addQRCodeAndNumber(doc, uniqueNumber);
 
   return doc.output("dataurlstring");
 };
