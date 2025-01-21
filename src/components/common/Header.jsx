@@ -77,7 +77,7 @@ const Header = () => {
   ];
 
   return (
-    <div className="sticky top-0 z-50 bg-gradient-to-r from-primary-100 to-gray-200 shadow-md">
+    <div className="sticky top-0 z-50 bg-gradient-to-r from-primary-50 via-gray-100 to-primary-50 shadow-md">
       <header className="border-b border-gray-200">
         <nav className="mx-auto flex items-center justify-between gap-x-8 py-1 px-6 md:px-14 lg:py-1">
           {/* Logo and Contact Info Section */}

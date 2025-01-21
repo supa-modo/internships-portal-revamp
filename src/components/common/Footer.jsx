@@ -7,6 +7,8 @@ import {
   FaMapMarkerAlt,
   FaPhone,
   FaEnvelope,
+  FaFacebookF,
+  FaInstagram,
 } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
 
@@ -19,7 +21,11 @@ const Footer = () => {
           {/* About EAC Section */}
           <div className="space-y-4">
             <div className="flex items-center space-x-2 mb-4">
-              <img src="/eac-logo.png" alt="EAC Logo" className="w-20 sm:w-14 h-auto" />
+              <img
+                src="/eac-logo.png"
+                alt="EAC Logo"
+                className="w-20 sm:w-14 h-auto"
+              />
               <h3 className="text-lg sm:text-xl font-extrabold font-nunito-sans">
                 East African Community Secretariat
               </h3>
@@ -106,33 +112,33 @@ const Footer = () => {
                 href="https://facebook.com/eac"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bg-primary-800 border border-gray-50/5 p-2 rounded-full hover:bg-primary-700 transition duration-300"
+                className="bg-primary-800 border border-gray-50/5 p-3 rounded-full hover:bg-primary-700 transition duration-300"
               >
-                <FaFacebook className="text-2xl" />
+                <FaFacebookF className="text-xl" />
               </a>
               <a
                 href="https://twitter.com/eac"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bg-primary-800 p-2 border border-gray-50/5 rounded-full hover:bg-primary-700 transition duration-300"
+                className="bg-primary-800 p-3 border border-gray-50/5 rounded-full hover:bg-primary-700 transition duration-300"
               >
-                <FaXTwitter className="text-2xl" />
+                <FaXTwitter className="text-xl" />
               </a>
               <a
-                href="https://linkedin.com/company/eac"
+                href="https://www.instagram.com/eac_secretariat1/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bg-primary-800 p-2 border border-gray-50/5 rounded-full hover:bg-primary-700 transition duration-300"
+                className="bg-primary-800 p-3 border border-gray-50/5 rounded-full hover:bg-primary-700 transition duration-300"
               >
-                <FaLinkedin className="text-2xl" />
+                <FaInstagram className="text-xl" />
               </a>
               <a
                 href="https://youtube.com/eac"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bg-primary-800 p-2 border border-gray-50/5 rounded-full hover:bg-primary-700 transition duration-300"
+                className="bg-primary-800 p-3 border border-gray-50/5 rounded-full hover:bg-primary-700 transition duration-300"
               >
-                <FaYoutube className="text-2xl" />
+                <FaYoutube className="text-xl" />
               </a>
             </div>
             <div className="mt-6">
