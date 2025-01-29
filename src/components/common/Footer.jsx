@@ -112,33 +112,33 @@ const Footer = () => {
                 href="https://facebook.com/eac"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bg-primary-800 border border-gray-50/5 p-3 rounded-full hover:bg-primary-700 transition duration-300"
+                className="bg-primary-800 border border-gray-50/5 p-2.5 rounded-full hover:bg-primary-700 transition duration-300"
               >
-                <FaFacebookF className="text-xl" />
+                <FaFacebookF className="text-lg" />
               </a>
               <a
                 href="https://twitter.com/eac"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bg-primary-800 p-3 border border-gray-50/5 rounded-full hover:bg-primary-700 transition duration-300"
+                className="bg-primary-800 p-2.5 border border-gray-50/5 rounded-full hover:bg-primary-700 transition duration-300"
               >
-                <FaXTwitter className="text-xl" />
+                <FaXTwitter className="text-lg" />
               </a>
               <a
                 href="https://www.instagram.com/eac_secretariat1/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bg-primary-800 p-3 border border-gray-50/5 rounded-full hover:bg-primary-700 transition duration-300"
+                className="bg-primary-800 p-2.5 border border-gray-50/5 rounded-full hover:bg-primary-700 transition duration-300"
               >
-                <FaInstagram className="text-xl" />
+                <FaInstagram className="text-lg" />
               </a>
               <a
                 href="https://youtube.com/eac"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bg-primary-800 p-3 border border-gray-50/5 rounded-full hover:bg-primary-700 transition duration-300"
+                className="bg-primary-800 p-2.5 border border-gray-50/5 rounded-full hover:bg-primary-700 transition duration-300"
               >
-                <FaYoutube className="text-xl" />
+                <FaYoutube className="text-lg" />
               </a>
             </div>
             <div className="mt-6">

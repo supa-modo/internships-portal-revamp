@@ -206,10 +206,10 @@ const ApprovalModal = ({ application, onClose, type = "approval" }) => {
                 <div className="mt-6 py-4 bg-gray-50 rounded-lg">
                   <p className="text-sm text-gray-600">
                     The previewed document will be sent to the applicant's email
-                    address with a message informing them of the{" "}
+                    address with a message informing him/her of the{" "}
                     {type === "approval"
                       ? "application approval"
-                      : "internship extension"}
+                      : "internship extension"}{" "}
                     and further instructions.
                   </p>
                   <p className="text-sm text-gray-600 mt-3">
