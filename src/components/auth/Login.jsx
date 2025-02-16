@@ -55,7 +55,7 @@ const LoginPage = () => {
       className="flex items-center justify-center min-h-screen bg-cover bg-center font-inter p-4 sm:p-6"
       style={{ backgroundImage: `url(${bg_image})` }}
     >
-      <section className="relative bg-white bg-opacity-90 p-6 sm:p-8 rounded-3xl shadow-lg w-full max-w-2xl">
+      <section className="relative bg-white/75 backdrop-blur-sm p-6 sm:p-4 rounded-3xl shadow-lg w-full max-w-2xl">
         {/* Close Button */}
         <button
           className="absolute top-5 right-5 text-red-500 hover:text-red-700 font-extrabold text-xl"
@@ -71,11 +71,11 @@ const LoginPage = () => {
             alt="Logo"
             className="mx-auto mb-2 h-20 sm:h-24 md:h-28"
           />
-          <h2 className="text-center font-extrabold text-xl sm:text-2xl text-primary-700">
+          <h2 className="text-center font-extrabold text-xl sm:text-2xl text-primary-800">
             East African Community Secretariat
           </h2>
-          <p className="mt-1 font-bold text-sm sm:text-base text-gray-500">
-            Sign in to access your Account
+          <p className="mt-1 font-bold text-sm sm:text-base text-gray-600">
+            Login to your account to continue
           </p>
         </div>
 
@@ -157,7 +157,7 @@ const LoginPage = () => {
             </div>
             <a
               href="#"
-              className="text-xs sm:text-sm sm:font-sans font-open-sans font-bold text-primary-700 hover:underline"
+              className="text-xs sm:text-sm sm:font-sans font-open-sans font-bold text-primary-800 hover:underline"
             >
               Forgot your password?
             </a>
@@ -171,7 +171,7 @@ const LoginPage = () => {
               loadingText="Signing in..."
               isLoading={loading}
               prefixElement={<BiLogInCircle size={20} />}
-              className="w-full sm:w-3/5 mt-2 py-3 shadow-lg text-center font-semibold text-white text-sm md:text-[14px] bg-green-700 rounded-lg hover:bg-green-800 transition duration-300"
+              className="w-full sm:w-3/5 mt-2 py-3 shadow-lg text-center font-semibold text-white text-sm md:text-[14px] bg-green-800 rounded-lg hover:bg-green-700 transition duration-300"
             />
           </div>
         </form>

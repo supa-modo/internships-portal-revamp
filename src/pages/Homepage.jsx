@@ -11,12 +11,12 @@ const HomePage = () => {
     <div className="min-h-screen bg-gray-100">
       <Header />
 
-      <main className="max-w-screen-2xl mx-auto px-4  sm:px-6 lg:px-8 py-6">
+      <main className="max-w-screen-2xl mx-auto px-4  sm:px-6 lg:px-8 py-6 pb-20">
         <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
           {/* Policy Header */}
-          <div className="bg-green-700 text-center px-5 py-5 sm:px-8 sm:py-6">
+          <div className="bg-green-700/90 text-center px-5 py-5 sm:px-8 sm:py-6">
             <h2 className="text-[15px] sm:text-lg md:text-2xl font-nunito-sans font-extrabold text-white">
-              East African Community Internship Policy
+              EAC Internship Policy
             </h2>
             <p className="mt-2 text-[13px] md:text-base text-primary-100">
               Please review our internship policy before proceeding with your
